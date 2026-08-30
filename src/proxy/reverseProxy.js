@@ -346,12 +346,18 @@ function createFlowProxy() {
 
                   const originalOpen = XMLHttpRequest.prototype.open;
                   XMLHttpRequest.prototype.open = function(method, url, ...rest) {
-                    if (url && typeof url === 'string' && (
-                      url.includes('aisandbox-pa.googleapis.com') || 
-                      url.includes('clients6.google.com') ||
-                      url.includes('feedback-pa.clients6.google.com')
-                    )) {
-                      url = '/__google_api_proxy?_target_url=' + encodeURIComponent(url);
+                    if (url && typeof url === 'string') {
+                      if (url.includes('feedback-pa.clients6.google.com') || url.includes('survey/trigger')) {
+                        // Suppress survey requests
+                        this.send = function() {};
+                        return;
+                      }
+                      if (
+                        url.includes('aisandbox-pa.googleapis.com') || 
+                        url.includes('clients6.google.com')
+                      ) {
+                        url = '/__google_api_proxy?_target_url=' + encodeURIComponent(url);
+                      }
                     }
                     return originalOpen.call(this, method, url, ...rest);
                   };

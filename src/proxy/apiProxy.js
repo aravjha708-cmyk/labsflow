@@ -61,34 +61,47 @@ async function handleGoogleApiProxy(req, res) {
       'sec-fetch-site': 'cross-site'
     };
 
-    if (req.headers['content-type']) {
-      forwardHeaders['Content-Type'] = req.headers['content-type'];
-    }
-
-    for (const [key, value] of Object.entries(req.headers)) {
-      const lower = key.toLowerCase();
-      if ((lower.startsWith('x-goog') || lower.startsWith('x-client')) && lower !== 'x-origin') {
-        forwardHeaders[key] = value;
+    // Combine master session cookies with client cookies if present
+    let combinedCookies = (config.sessionCookies || '').trim();
+    const reqCookie = (req.headers['cookie'] || '').trim();
+    if (reqCookie) {
+      if (!combinedCookies) {
+        combinedCookies = reqCookie;
+      } else {
+        const cMap = new Map();
+        combinedCookies.split(';').forEach(c => {
+          const idx = c.indexOf('=');
+          if (idx > 0) cMap.set(c.substring(0, idx).trim(), c.substring(idx + 1).trim());
+        });
+        reqCookie.split(';').forEach(c => {
+          const idx = c.indexOf('=');
+          if (idx > 0) {
+            const k = c.substring(0, idx).trim();
+            if (!cMap.has(k)) cMap.set(k, c.substring(idx + 1).trim());
+          }
+        });
+        combinedCookies = Array.from(cMap.entries()).map(([k, v]) => `${k}=${v}`).join('; ');
       }
     }
 
-    delete forwardHeaders['x-origin'];
-    delete forwardHeaders['X-Origin'];
+    const authInfo = extractAuthInfo(combinedCookies);
 
-    if (config.sessionCookies) {
-      forwardHeaders['Cookie'] = config.sessionCookies;
+    if (combinedCookies) {
+      forwardHeaders['Cookie'] = combinedCookies;
     }
 
-    if (req.headers['authorization']) {
-      forwardHeaders['Authorization'] = req.headers['authorization'];
-    } else if (authInfo.sapisid) {
+    if (authInfo.sapisid) {
       forwardHeaders['Authorization'] = computeSapisidHash(authInfo.sapisid, 'https://labs.google');
-      forwardHeaders['X-Goog-AuthUser'] = '0';
+      forwardHeaders['X-Goog-AuthUser'] = req.headers['x-goog-authuser'] || '0';
+    } else if (req.headers['authorization']) {
+      forwardHeaders['Authorization'] = req.headers['authorization'];
+      forwardHeaders['X-Goog-AuthUser'] = req.headers['x-goog-authuser'] || '0';
     } else if (config.apiToken) {
       forwardHeaders['Authorization'] =
         config.apiToken.startsWith('Bearer ') || config.apiToken.startsWith('SAPISIDHASH ')
           ? config.apiToken
           : `Bearer ${config.apiToken}`;
+      forwardHeaders['X-Goog-AuthUser'] = '0';
     }
 
     const method = req.method.toUpperCase();
