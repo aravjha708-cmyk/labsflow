@@ -182,46 +182,71 @@ function createFlowProxy() {
             .replace(/anishbhai7376/gi, activeUserEmail.split('@')[0]);
 
           const injectionScript = `
-            <script src="https://www.google.com/recaptcha/enterprise.js?render=6LdsFiUsAAAAAIjVDZcuLhaHiDn5nnHVXVRQGeMV" async defer></script>
             <script id="__flow_proxy_network_hook">
               (function() {
                 try {
                   const SERVER_USER_EMAIL = ${JSON.stringify(activeUserEmail)};
                   const SERVER_USER_NAME = ${JSON.stringify(activeUserName)};
 
-                  // reCAPTCHA Enterprise Token Generator for Google AI Sandbox
-                  function getRecaptchaToken() {
-                    return new Promise(function(resolve) {
+                  // Self-loading reCAPTCHA Enterprise Token Engine
+                  async function getRecaptchaToken() {
+                    const SITE_KEYS = [
+                      "6LdsFiUsAAAAAIjVDZcuLhaHiDn5nnHVXVRQGeMV",
+                      "6LdsFiYqAAAAAOH9vX4kM0V0Fq2jR6_lC7mQhM_5"
+                    ];
+
+                    for (var k = 0; k < SITE_KEYS.length; k++) {
+                      var SITE_KEY = SITE_KEYS[k];
                       try {
-                        if (typeof window !== "undefined" && window.grecaptcha && window.grecaptcha.enterprise) {
-                          window.grecaptcha.enterprise.ready(function() {
-                            try {
-                              window.grecaptcha.enterprise.execute(
-                                "6LdsFiUsAAAAAIjVDZcuLhaHiDn5nnHVXVRQGeMV",
-                                { action: "IMAGE_FX" }
-                              ).then(function(token) {
-                                resolve(token || null);
-                              }).catch(function(e) {
-                                // Try fallback action without action param if specified
-                                window.grecaptcha.enterprise.execute("6LdsFiUsAAAAAIjVDZcuLhaHiDn5nnHVXVRQGeMV")
-                                  .then(function(t) { resolve(t || null); })
-                                  .catch(function(err2) {
-                                    console.warn("[Flow] reCAPTCHA execute error:", err2);
-                                    resolve(null);
+                        var token = await new Promise(function(resolve) {
+                          var scriptId = "google-recaptcha-enterprise-" + SITE_KEY.substring(0, 10);
+                          if (!document.getElementById(scriptId)) {
+                            var script = document.createElement("script");
+                            script.id = scriptId;
+                            script.src = "https://www.google.com/recaptcha/enterprise.js?render=" + encodeURIComponent(SITE_KEY);
+                            script.async = true;
+                            script.defer = true;
+                            document.head.appendChild(script);
+                          }
+
+                          var attempts = 0;
+                          function checkGrecaptcha() {
+                            if (window.grecaptcha && window.grecaptcha.enterprise) {
+                              window.grecaptcha.enterprise.ready(function() {
+                                window.grecaptcha.enterprise.execute(SITE_KEY, { action: "FLOW_GENERATE" })
+                                  .then(function(t) {
+                                    if (t) resolve(t);
+                                    else {
+                                      window.grecaptcha.enterprise.execute(SITE_KEY)
+                                        .then(function(t2) { resolve(t2 || null); })
+                                        .catch(function() { resolve(null); });
+                                    }
+                                  })
+                                  .catch(function() {
+                                    window.grecaptcha.enterprise.execute(SITE_KEY)
+                                      .then(function(t3) { resolve(t3 || null); })
+                                      .catch(function() { resolve(null); });
                                   });
                               });
-                            } catch (e) {
-                              console.warn("[Flow] reCAPTCHA generation error:", e);
-                              resolve(null);
+                            } else {
+                              attempts++;
+                              if (attempts < 40) {
+                                setTimeout(checkGrecaptcha, 100);
+                              } else {
+                                resolve(null);
+                              }
                             }
-                          });
-                        } else {
-                          resolve(null);
+                          }
+                          checkGrecaptcha();
+                        });
+
+                        if (token) {
+                          console.log('[Flow] Generated reCAPTCHA token successfully with key:', SITE_KEY.substring(0, 8));
+                          return token;
                         }
-                      } catch (_) {
-                        resolve(null);
-                      }
-                    });
+                      } catch (_) {}
+                    }
+                    return null;
                   }
 
                   try {
