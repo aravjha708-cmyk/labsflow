@@ -2,12 +2,22 @@ const axios = require('axios');
 const config = require('../config');
 const { computeSapisidHash, extractAuthInfo } = require('./googleAuthHelper');
 const { publicHttpsAgent } = require('./dnsHelper');
-const { executeGoogleApiInBrowser } = require('./headlessBridge');
 
 /**
- * High-Performance Google API Proxy for Google AI Sandbox & Google APIs
+ * Clean & Sanitized Google API Proxy for Google AI Sandbox & Google APIs
+ * Strips all cloud proxy headers (x-forwarded-*, Render headers) to prevent Google 403 flags
  */
 async function handleGoogleApiProxy(req, res) {
+  // 1. Handle CORS Preflight
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
+  res.setHeader('Access-Control-Allow-Headers', '*');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
   let targetUrl = req.query._target_url;
   if (req.url && req.url.includes('_target_url=')) {
     const raw = req.url.substring(req.url.indexOf('_target_url=') + 12);
@@ -30,13 +40,8 @@ async function handleGoogleApiProxy(req, res) {
     targetUrl.includes('feedback-pa') ||
     targetUrl.includes('survey/trigger')
   ) {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
-    res.setHeader('Access-Control-Allow-Headers', '*');
     res.setHeader('Content-Type', 'application/json');
     res.status(200).json({});
-
-    // Process asynchronously in background
     forwardInBackground(req, targetUrl);
     return;
   }
@@ -44,35 +49,17 @@ async function handleGoogleApiProxy(req, res) {
   try {
     const urlObj = new URL(targetUrl);
 
-    const forwardHeaders = {
-      ...req.headers,
-      'Host': urlObj.host,
-      'Origin': 'https://labs.google',
-      'Referer': 'https://labs.google/',
-      'User-Agent':
-        req.headers['user-agent'] ||
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36',
-      'Accept': req.headers['accept'] || 'application/json, text/plain, */*',
-      'Accept-Language': req.headers['accept-language'] || 'en-US,en;q=0.9',
-      'Sec-Fetch-Dest': 'empty',
-      'Sec-Fetch-Mode': 'cors',
-      'Sec-Fetch-Site': 'cross-site',
-      'Priority': 'u=1, i'
-    };
-
-    if (req.headers['content-type']) {
-      forwardHeaders['Content-Type'] = req.headers['content-type'];
+    // 2. Resolve official Google OAuth ya29 Bearer Token
+    let bearerToken = config.apiToken;
+    if (!bearerToken || !bearerToken.startsWith('ya29.')) {
+      bearerToken = await config.getValidAccessToken();
     }
 
-    delete forwardHeaders['x-origin'];
-    delete forwardHeaders['X-Origin'];
-    delete forwardHeaders['x-target-url'];
-    delete forwardHeaders['x-goog-recaptcha-token'];
-    delete forwardHeaders['X-Goog-Recaptcha-Token'];
-    delete forwardHeaders['content-length'];
-    delete forwardHeaders['Content-Length'];
+    if (bearerToken && !bearerToken.startsWith('Bearer ')) {
+      bearerToken = `Bearer ${bearerToken}`;
+    }
 
-    // Combine master session cookies with client cookies if present
+    // 3. Combine session cookies if needed
     let combinedCookies = (config.sessionCookies || '').trim();
     const reqCookie = (req.headers['cookie'] || '').trim();
     if (reqCookie) {
@@ -95,34 +82,48 @@ async function handleGoogleApiProxy(req, res) {
       }
     }
 
-    const authInfo = extractAuthInfo(combinedCookies);
+    // 4. SANITIZE HEADERS: Never spread req.headers to prevent leaking Render proxy headers
+    const cleanHeaders = {
+      'Accept': '*/*',
+      'Accept-Language': 'en-US,en;q=0.9',
+      'Host': urlObj.host,
+      'Origin': 'https://labs.google',
+      'Referer': 'https://labs.google/',
+      'Sec-Fetch-Dest': 'empty',
+      'Sec-Fetch-Mode': 'cors',
+      'Sec-Fetch-Site': 'cross-site',
+      'User-Agent':
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+      'X-Browser-Channel': 'stable',
+      'X-Browser-Copyright': 'Copyright 2024 Google LLC. All rights reserved.',
+      'X-Browser-Year': '2024',
+      'X-Goog-AuthUser': '0'
+    };
 
-    if (combinedCookies) {
-      forwardHeaders['Cookie'] = combinedCookies;
-    }
-
-    // Attach official Google OAuth ya29 Bearer Token
-    let bearerToken = config.apiToken;
-    if (!bearerToken || !bearerToken.startsWith('ya29.')) {
-      bearerToken = await config.getValidAccessToken();
+    if (req.headers['content-type']) {
+      cleanHeaders['Content-Type'] = req.headers['content-type'];
+    } else {
+      cleanHeaders['Content-Type'] = 'application/json';
     }
 
     if (bearerToken) {
-      forwardHeaders['Authorization'] = bearerToken.startsWith('Bearer ') ? bearerToken : `Bearer ${bearerToken}`;
-      forwardHeaders['X-Goog-AuthUser'] = '0';
-    } else if (authInfo.sapisid) {
-      forwardHeaders['Authorization'] = computeSapisidHash(authInfo.sapisid, 'https://labs.google');
-      forwardHeaders['X-Goog-AuthUser'] = req.headers['x-goog-authuser'] || '0';
-    } else if (req.headers['authorization']) {
-      forwardHeaders['Authorization'] = req.headers['authorization'];
-      forwardHeaders['X-Goog-AuthUser'] = req.headers['x-goog-authuser'] || '0';
+      cleanHeaders['Authorization'] = bearerToken;
+    } else {
+      const authInfo = extractAuthInfo(combinedCookies);
+      if (authInfo.sapisid) {
+        cleanHeaders['Authorization'] = computeSapisidHash(authInfo.sapisid, 'https://labs.google');
+      }
     }
 
+    if (combinedCookies) {
+      cleanHeaders['Cookie'] = combinedCookies;
+    }
+
+    // 5. Clean Request Body (strip any invalid recaptcha tokens)
     const method = req.method.toUpperCase();
     const isBodyAllowed = !['GET', 'HEAD', 'OPTIONS'].includes(method);
     let requestData = isBodyAllowed && req.body && req.body.length > 0 ? req.body : undefined;
 
-    // Clean request payload: strip any stale or invalid recaptcha tokens
     if (requestData) {
       try {
         const bodyStr = Buffer.isBuffer(requestData) ? requestData.toString('utf-8') : String(requestData);
@@ -146,36 +147,28 @@ async function handleGoogleApiProxy(req, res) {
       } catch (_) {}
     }
 
+    // 6. Proxy Agent
     const { HttpsProxyAgent } = require('https-proxy-agent');
-
     let httpsAgent = publicHttpsAgent;
     if (config.outboundProxy) {
       try {
         httpsAgent = new HttpsProxyAgent(config.outboundProxy);
-        console.log('[Proxy] Routing through residential proxy:', config.outboundProxy.replace(/:[^:]*@/, ':***@'));
       } catch (proxyErr) {
         console.error('Invalid outbound proxy configuration:', proxyErr.message);
       }
     }
 
-    delete forwardHeaders['content-length'];
-    delete forwardHeaders['Content-Length'];
-
+    // 7. Forward directly to Google with pristine headers
     const response = await axios({
       method: req.method,
       url: targetUrl,
-      headers: forwardHeaders,
+      headers: cleanHeaders,
       data: requestData,
       httpsAgent: httpsAgent,
       timeout: 120000,
       responseType: 'arraybuffer',
       validateStatus: () => true
     });
-
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
-    res.setHeader('Access-Control-Allow-Headers', '*');
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
 
     if (response.headers['content-type']) {
       res.setHeader('Content-Type', response.headers['content-type']);
@@ -188,10 +181,10 @@ async function handleGoogleApiProxy(req, res) {
       } catch (_) {}
     }
 
-    res.status(response.status).send(response.data);
+    return res.status(response.status).send(response.data);
   } catch (err) {
     console.error(`[Google API Proxy Network Error] ${req.method} ${targetUrl} =>`, err.message);
-    res.status(502).json({
+    return res.status(502).json({
       error: 'Google API Proxy Request Failed',
       message: err.message,
       targetUrl
@@ -206,24 +199,39 @@ async function forwardInBackground(req, targetUrl) {
     const forwardHeaders = {
       'Host': urlObj.host,
       'Origin': 'https://labs.google',
-      'Referer': 'https://labs.google/fx/tools/flow',
-      'User-Agent': req.headers['user-agent'] || 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-      'Cookie': config.sessionCookies || ''
+      'Referer': 'https://labs.google/',
+      'User-Agent':
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+      'Accept': 'application/json, text/plain, */*',
+      'Content-Type': 'application/json',
+      'Sec-Fetch-Dest': 'empty',
+      'Sec-Fetch-Mode': 'cors',
+      'Sec-Fetch-Site': 'cross-site'
     };
+
+    if (config.sessionCookies) {
+      forwardHeaders['Cookie'] = config.sessionCookies;
+    }
+
     if (authInfo.sapisid) {
       forwardHeaders['Authorization'] = computeSapisidHash(authInfo.sapisid, 'https://labs.google');
     }
-    if (req.headers['content-type']) {
-      forwardHeaders['Content-Type'] = req.headers['content-type'];
+
+    const { HttpsProxyAgent } = require('https-proxy-agent');
+    let httpsAgent = publicHttpsAgent;
+    if (config.outboundProxy) {
+      try {
+        httpsAgent = new HttpsProxyAgent(config.outboundProxy);
+      } catch (_) {}
     }
 
     await axios({
       method: req.method,
       url: targetUrl,
       headers: forwardHeaders,
-      data: req.body,
-      httpsAgent: publicHttpsAgent,
-      timeout: 10000,
+      data: req.body && req.body.length > 0 ? req.body : undefined,
+      httpsAgent: httpsAgent,
+      timeout: 15000,
       validateStatus: () => true
     });
   } catch (_) {}
