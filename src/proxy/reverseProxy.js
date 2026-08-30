@@ -242,16 +242,27 @@ function createFlowProxy() {
                     return copy;
                   }
 
+                  // Suppress devtools warning
+                  if (!window.__REDUX_DEVTOOLS_EXTENSION__) {
+                    window.__REDUX_DEVTOOLS_EXTENSION__ = function() {
+                      return { init: function(){}, send: function(){}, subscribe: function(){ return function(){}; } };
+                    };
+                  }
+
                   const originalFetch = window.fetch;
                   window.fetch = async function(resource, init) {
                     let url = typeof resource === 'string' ? resource : (resource && resource.url ? resource.url : '');
 
-                    // Fast-path: instantly succeed telemetry & log endpoints with valid JSON to eliminate console errors
+                    // Fast-path: cleanly resolve tRPC background telemetry without parser errors
                     if (url && (
                       url.includes('general.submitBatchLog') ||
                       url.includes('general.reportClientSideError')
                     )) {
-                      return new Response(JSON.stringify([{ result: { data: { json: { success: true } } } }]), {
+                      const isBatch = url.includes('batch=1');
+                      const data = isBatch
+                        ? [{ result: { data: { json: null } } }]
+                        : { result: { data: { json: null } } };
+                      return new Response(JSON.stringify(data), {
                         status: 200,
                         headers: { 'Content-Type': 'application/json' }
                       });

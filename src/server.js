@@ -27,12 +27,16 @@ app.use(cors());
 app.all('/__google_api_proxy', express.raw({ type: '*/*', limit: '50mb' }), handleGoogleApiProxy);
 
 // Fast-path tRPC Telemetry & Client Logging endpoints to eliminate 404 console errors
-app.all(['/fx/api/trpc/general.submitBatchLog', '/api/trpc/general.submitBatchLog'], (req, res) => {
-  res.json([{ result: { data: { json: { success: true } } } }]);
-});
-app.all(['/fx/api/trpc/general.reportClientSideError', '/api/trpc/general.reportClientSideError'], (req, res) => {
-  res.json([{ result: { data: { json: { success: true } } } }]);
-});
+app.all(
+  ['/fx/api/trpc/general.submitBatchLog', '/api/trpc/general.submitBatchLog', '/fx/api/trpc/general.reportClientSideError', '/api/trpc/general.reportClientSideError'],
+  (req, res) => {
+    const isBatch = Boolean(req.query.batch || req.path.includes('batch'));
+    if (isBatch) {
+      return res.json([{ result: { data: { json: null } } }]);
+    }
+    return res.json({ result: { data: { json: null } } });
+  }
+);
 
 // ==============================================================
 // 2. PARSE JSON FOR LOCAL API ROUTES & SERVE STATIC PUBLIC FILES
