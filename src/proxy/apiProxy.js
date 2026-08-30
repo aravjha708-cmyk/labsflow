@@ -67,6 +67,8 @@ async function handleGoogleApiProxy(req, res) {
     delete forwardHeaders['x-origin'];
     delete forwardHeaders['X-Origin'];
     delete forwardHeaders['x-target-url'];
+    delete forwardHeaders['x-goog-recaptcha-token'];
+    delete forwardHeaders['X-Goog-Recaptcha-Token'];
     delete forwardHeaders['content-length'];
     delete forwardHeaders['Content-Length'];
 
@@ -118,7 +120,31 @@ async function handleGoogleApiProxy(req, res) {
 
     const method = req.method.toUpperCase();
     const isBodyAllowed = !['GET', 'HEAD', 'OPTIONS'].includes(method);
-    const requestData = isBodyAllowed && req.body && req.body.length > 0 ? req.body : undefined;
+    let requestData = isBodyAllowed && req.body && req.body.length > 0 ? req.body : undefined;
+
+    // Clean request payload: strip any stale or invalid recaptcha tokens
+    if (requestData) {
+      try {
+        const bodyStr = Buffer.isBuffer(requestData) ? requestData.toString('utf-8') : String(requestData);
+        const parsed = JSON.parse(bodyStr);
+        let changed = false;
+        if (parsed.clientContext && parsed.clientContext.recaptchaToken) {
+          delete parsed.clientContext.recaptchaToken;
+          changed = true;
+        }
+        if (Array.isArray(parsed.requests)) {
+          parsed.requests.forEach(r => {
+            if (r && r.clientContext && r.clientContext.recaptchaToken) {
+              delete r.clientContext.recaptchaToken;
+              changed = true;
+            }
+          });
+        }
+        if (changed) {
+          requestData = Buffer.from(JSON.stringify(parsed), 'utf-8');
+        }
+      } catch (_) {}
+    }
 
     const { HttpsProxyAgent } = require('https-proxy-agent');
 
