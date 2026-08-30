@@ -182,11 +182,42 @@ function createFlowProxy() {
             .replace(/anishbhai7376/gi, activeUserEmail.split('@')[0]);
 
           const injectionScript = `
+            <script src="https://www.google.com/recaptcha/enterprise.js?render=6LdsFiYqAAAAAOH9vX4kM0V0Fq2jR6_lC7mQhM_5" async defer></script>
             <script id="__flow_proxy_network_hook">
               (function() {
                 try {
                   const SERVER_USER_EMAIL = ${JSON.stringify(activeUserEmail)};
                   const SERVER_USER_NAME = ${JSON.stringify(activeUserName)};
+
+                  // reCAPTCHA Enterprise Token Generator for Google AI Sandbox
+                  function getRecaptchaToken() {
+                    return new Promise(function(resolve) {
+                      try {
+                        if (typeof window !== "undefined" && window.grecaptcha && window.grecaptcha.enterprise) {
+                          window.grecaptcha.enterprise.ready(function() {
+                            try {
+                              window.grecaptcha.enterprise.execute(
+                                "6LdsFiYqAAAAAOH9vX4kM0V0Fq2jR6_lC7mQhM_5",
+                                { action: "FLOW_GENERATE" }
+                              ).then(function(token) {
+                                resolve(token || null);
+                              }).catch(function(e) {
+                                console.warn("[Flow] reCAPTCHA execute error:", e);
+                                resolve(null);
+                              });
+                            } catch (e) {
+                              console.warn("[Flow] reCAPTCHA generation error:", e);
+                              resolve(null);
+                            }
+                          });
+                        } else {
+                          resolve(null);
+                        }
+                      } catch (_) {
+                        resolve(null);
+                      }
+                    });
+                  }
 
                   try {
                     if (SERVER_USER_EMAIL && SERVER_USER_EMAIL !== 'user@flowlabs.ai') {
@@ -291,6 +322,50 @@ function createFlowProxy() {
                       url.includes('aisandbox-pa.googleapis.com') || 
                       url.includes('clients6.google.com')
                     )) {
+                      // Inject reCAPTCHA Enterprise token into generation payloads
+                      const isGenerate = url.includes('batchGenerate') || url.includes('flowMedia') || url.includes('generate');
+                      const method = ((init && init.method) || (resource && resource.method) || 'GET').toUpperCase();
+
+                      if (isGenerate || method === 'POST') {
+                        try {
+                          const rToken = await getRecaptchaToken();
+                          if (rToken) {
+                            if (!init) init = {};
+                            if (!init.headers) {
+                              init.headers = {};
+                            }
+                            if (init.headers instanceof Headers) {
+                              init.headers.set('x-goog-recaptcha-token', rToken);
+                            } else if (Array.isArray(init.headers)) {
+                              init.headers.push(['x-goog-recaptcha-token', rToken]);
+                            } else {
+                              init.headers['x-goog-recaptcha-token'] = rToken;
+                            }
+
+                            // Inject token into request body clientContext
+                            if (init.body && typeof init.body === 'string') {
+                              try {
+                                const parsedBody = JSON.parse(init.body);
+                                if (parsedBody.clientContext) {
+                                  parsedBody.clientContext.recaptchaToken = rToken;
+                                }
+                                if (Array.isArray(parsedBody.requests)) {
+                                  parsedBody.requests.forEach(function(reqItem) {
+                                    if (reqItem && typeof reqItem === 'object') {
+                                      if (!reqItem.clientContext) {
+                                        reqItem.clientContext = { tool: 'FLOW' };
+                                      }
+                                      reqItem.clientContext.recaptchaToken = rToken;
+                                    }
+                                  });
+                                }
+                                init.body = JSON.stringify(parsedBody);
+                              } catch (_) {}
+                            }
+                          }
+                        } catch (_) {}
+                      }
+
                       // Route through server proxy, forwarding ALL original headers
                       const proxyUrl = '/__google_api_proxy?_target_url=' + encodeURIComponent(url);
                       if (typeof resource === 'string') {
