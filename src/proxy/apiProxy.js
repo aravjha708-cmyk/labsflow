@@ -42,7 +42,6 @@ async function handleGoogleApiProxy(req, res) {
 
   try {
     const urlObj = new URL(targetUrl);
-    const authInfo = extractAuthInfo(config.sessionCookies);
 
     const forwardHeaders = {
       'Host': urlObj.host,
