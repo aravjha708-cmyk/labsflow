@@ -99,14 +99,14 @@ async function handleGoogleApiProxy(req, res) {
       forwardHeaders['Cookie'] = combinedCookies;
     }
 
-    // Automatically retrieve and attach valid Google OAuth access token
-    let oauthToken = config.apiToken;
-    if (!oauthToken) {
-      oauthToken = await config.getValidAccessToken();
+    // Attach official Google OAuth ya29 Bearer Token
+    let bearerToken = config.apiToken;
+    if (!bearerToken || !bearerToken.startsWith('ya29.')) {
+      bearerToken = await config.getValidAccessToken();
     }
 
-    if (oauthToken) {
-      forwardHeaders['Authorization'] = oauthToken.startsWith('Bearer ') ? oauthToken : `Bearer ${oauthToken}`;
+    if (bearerToken) {
+      forwardHeaders['Authorization'] = bearerToken.startsWith('Bearer ') ? bearerToken : `Bearer ${bearerToken}`;
       forwardHeaders['X-Goog-AuthUser'] = '0';
     } else if (authInfo.sapisid) {
       forwardHeaders['Authorization'] = computeSapisidHash(authInfo.sapisid, 'https://labs.google');
@@ -129,24 +129,6 @@ async function handleGoogleApiProxy(req, res) {
         console.log('[Proxy] Routing through residential proxy:', config.outboundProxy.replace(/:[^:]*@/, ':***@'));
       } catch (proxyErr) {
         console.error('Invalid outbound proxy configuration:', proxyErr.message);
-      }
-    }
-
-    // Try executing inside genuine labs.google headless browser context (bypasses reCAPTCHA domain check)
-    const isGeneration = targetUrl.includes('batchGenerate') || targetUrl.includes('flowMedia') || targetUrl.includes('generate');
-    if (isGeneration) {
-      try {
-        const browserRes = await executeGoogleApiInBrowser(targetUrl, req.method, forwardHeaders, requestData);
-        if (browserRes && browserRes.success && browserRes.status < 500) {
-          res.setHeader('Access-Control-Allow-Origin', '*');
-          res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
-          res.setHeader('Access-Control-Allow-Headers', '*');
-          res.setHeader('Access-Control-Allow-Credentials', 'true');
-          res.setHeader('Content-Type', 'application/json');
-          return res.status(browserRes.status).send(browserRes.data);
-        }
-      } catch (brErr) {
-        console.warn('[Headless Bridge] Fallback to direct HTTP proxy:', brErr.message);
       }
     }
 
