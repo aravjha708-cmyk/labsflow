@@ -291,15 +291,6 @@ function createFlowProxy() {
                       url.includes('aisandbox-pa.googleapis.com') || 
                       url.includes('clients6.google.com')
                     )) {
-                      // Attempt direct browser fetch first (uses client residential IP)
-                      try {
-                        const directRes = await originalFetch.call(this, resource, init);
-                        if (directRes && (directRes.ok || (directRes.status !== 403 && directRes.status !== 401 && directRes.status !== 0))) {
-                          return directRes;
-                        }
-                      } catch (_) {}
-
-                      // Fallback to proxy if direct browser fetch is blocked by CORS
                       const proxyUrl = '/__google_api_proxy?_target_url=' + encodeURIComponent(url);
                       if (typeof resource === 'string') {
                         resource = proxyUrl;

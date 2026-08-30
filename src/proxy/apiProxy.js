@@ -152,8 +152,16 @@ async function handleGoogleApiProxy(req, res) {
       res.setHeader('Content-Type', response.headers['content-type']);
     }
 
+    if (response.status >= 400) {
+      try {
+        const bodyStr = Buffer.from(response.data).toString('utf-8');
+        console.error(`[Google API Proxy Error] ${req.method} ${targetUrl} [Status: ${response.status}] =>`, bodyStr);
+      } catch (_) {}
+    }
+
     res.status(response.status).send(response.data);
   } catch (err) {
+    console.error(`[Google API Proxy Network Error] ${req.method} ${targetUrl} =>`, err.message);
     res.status(502).json({
       error: 'Google API Proxy Request Failed',
       message: err.message,
