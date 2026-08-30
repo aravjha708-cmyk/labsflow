@@ -15,7 +15,7 @@ const config = {
   targetDefaultPath: process.env.TARGET_DEFAULT_PATH || '/fx/tools/flow',
   sessionCookies: process.env.SESSION_COOKIES || process.env.HF_SESSION_COOKIES || '',
   apiToken: process.env.API_TOKEN || process.env.HF_API_TOKEN || '',
-  googleProxyUrl: process.env.GOOGLE_PROXY_URL || process.env.CLOUDFLARE_PROXY_URL || '',
+  googleProxyUrl: process.env.GOOGLE_PROXY_URL || process.env.CLOUDFLARE_PROXY_URL || 'https://flow-proxy.aravjha708.workers.dev',
   outboundProxy: process.env.OUTBOUND_PROXY || process.env.RESIDENTIAL_PROXY || process.env.HTTP_PROXY || process.env.HTTPS_PROXY || '',
   gateEnabled: process.env.GATE_ENABLED !== 'false',
   gatePassword: process.env.GATE_PASSWORD || 'flow123',

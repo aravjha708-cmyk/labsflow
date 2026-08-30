@@ -127,16 +127,22 @@ async function handleGoogleApiProxy(req, res) {
       }
     }
 
+    const cloudflareUrl = config.googleProxyUrl || 'https://flow-proxy.aravjha708.workers.dev';
     let finalUrl = targetUrl;
-    if (config.googleProxyUrl) {
-      const cleanProxy = config.googleProxyUrl.replace(/\/+$/, '');
+    const requestHeaders = { ...forwardHeaders };
+
+    if (cloudflareUrl) {
+      const cleanProxy = cloudflareUrl.replace(/\/+$/, '');
       finalUrl = `${cleanProxy}?_target_url=${encodeURIComponent(targetUrl)}`;
+      const workerHost = new URL(cleanProxy).host;
+      requestHeaders['Host'] = workerHost;
+      requestHeaders['host'] = workerHost;
     }
 
     const response = await axios({
       method: req.method,
       url: finalUrl,
-      headers: forwardHeaders,
+      headers: requestHeaders,
       data: requestData,
       httpsAgent: httpsAgent,
       timeout: 120000,
