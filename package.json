@@ -8,6 +8,7 @@
     "dev": "nodemon src/server.js"
   },
   "dependencies": {
+    "@sparticuz/chromium": "^149.0.0",
     "axios": "^1.7.9",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
@@ -15,6 +16,7 @@
     "express": "^4.21.2",
     "http-proxy-middleware": "^3.0.3",
     "https-proxy-agent": "^9.1.0",
+    "puppeteer-core": "^25.9.0",
     "selfsigned": "^5.5.0",
     "uuid": "^11.0.5"
   },

@@ -2,6 +2,7 @@ const axios = require('axios');
 const config = require('../config');
 const { computeSapisidHash, extractAuthInfo } = require('./googleAuthHelper');
 const { publicHttpsAgent } = require('./dnsHelper');
+const { executeGoogleApiInBrowser } = require('./headlessBridge');
 
 /**
  * High-Performance Google API Proxy for Google AI Sandbox & Google APIs
@@ -128,6 +129,24 @@ async function handleGoogleApiProxy(req, res) {
         console.log('[Proxy] Routing through residential proxy:', config.outboundProxy.replace(/:[^:]*@/, ':***@'));
       } catch (proxyErr) {
         console.error('Invalid outbound proxy configuration:', proxyErr.message);
+      }
+    }
+
+    // Try executing inside genuine labs.google headless browser context (bypasses reCAPTCHA domain check)
+    const isGeneration = targetUrl.includes('batchGenerate') || targetUrl.includes('flowMedia') || targetUrl.includes('generate');
+    if (isGeneration) {
+      try {
+        const browserRes = await executeGoogleApiInBrowser(targetUrl, req.method, forwardHeaders, requestData);
+        if (browserRes && browserRes.success && browserRes.status < 500) {
+          res.setHeader('Access-Control-Allow-Origin', '*');
+          res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
+          res.setHeader('Access-Control-Allow-Headers', '*');
+          res.setHeader('Access-Control-Allow-Credentials', 'true');
+          res.setHeader('Content-Type', 'application/json');
+          return res.status(browserRes.status).send(browserRes.data);
+        }
+      } catch (brErr) {
+        console.warn('[Headless Bridge] Fallback to direct HTTP proxy:', brErr.message);
       }
     }
 
