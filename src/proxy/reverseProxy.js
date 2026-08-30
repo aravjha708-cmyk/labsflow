@@ -182,7 +182,7 @@ function createFlowProxy() {
             .replace(/anishbhai7376/gi, activeUserEmail.split('@')[0]);
 
           const injectionScript = `
-            <script src="https://www.google.com/recaptcha/enterprise.js?render=6LdsFiYqAAAAAOH9vX4kM0V0Fq2jR6_lC7mQhM_5" async defer></script>
+            <script src="https://www.google.com/recaptcha/enterprise.js?render=6LdsFiUsAAAAAIjVDZcuLhaHiDn5nnHVXVRQGeMV" async defer></script>
             <script id="__flow_proxy_network_hook">
               (function() {
                 try {
@@ -197,13 +197,18 @@ function createFlowProxy() {
                           window.grecaptcha.enterprise.ready(function() {
                             try {
                               window.grecaptcha.enterprise.execute(
-                                "6LdsFiYqAAAAAOH9vX4kM0V0Fq2jR6_lC7mQhM_5",
-                                { action: "FLOW_GENERATE" }
+                                "6LdsFiUsAAAAAIjVDZcuLhaHiDn5nnHVXVRQGeMV",
+                                { action: "IMAGE_FX" }
                               ).then(function(token) {
                                 resolve(token || null);
                               }).catch(function(e) {
-                                console.warn("[Flow] reCAPTCHA execute error:", e);
-                                resolve(null);
+                                // Try fallback action without action param if specified
+                                window.grecaptcha.enterprise.execute("6LdsFiUsAAAAAIjVDZcuLhaHiDn5nnHVXVRQGeMV")
+                                  .then(function(t) { resolve(t || null); })
+                                  .catch(function(err2) {
+                                    console.warn("[Flow] reCAPTCHA execute error:", err2);
+                                    resolve(null);
+                                  });
                               });
                             } catch (e) {
                               console.warn("[Flow] reCAPTCHA generation error:", e);
