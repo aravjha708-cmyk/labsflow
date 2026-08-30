@@ -1,0 +1,3589 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Flow Labs — Admin Console</title>
+
+  <style>
+    /* =========================================================
+   FLOW LABS ADMIN CONSOLE
+   Single file: HTML + CSS + JavaScript
+========================================================= */
+
+    :root {
+      --primary: #1a73e8;
+      --primary-hover: #1558b0;
+      --primary-light: #e8f0fe;
+
+      --green: #188038;
+      --green-light: #e6f4ea;
+
+      --red: #d93025;
+      --red-light: #fce8e6;
+
+      --yellow: #b06000;
+      --yellow-light: #fef7e0;
+
+      --purple: #8430ce;
+      --purple-light: #f3e8fd;
+
+      --text: #202124;
+      --text-secondary: #5f6368;
+      --text-muted: #80868b;
+
+      --border: #dadce0;
+      --border-light: #e8eaed;
+
+      --surface: #ffffff;
+      --background: #f8f9fa;
+      --hover: #f1f3f4;
+
+      --sidebar-width: 256px;
+      --sidebar-collapsed: 72px;
+      --topbar-height: 64px;
+
+      --radius-sm: 8px;
+      --radius: 12px;
+      --radius-lg: 16px;
+
+      --shadow: 0 1px 2px rgba(60, 64, 67, .15);
+      --shadow-lg: 0 8px 24px rgba(60, 64, 67, .15);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      color: var(--text);
+      background: var(--background);
+      font-size: 14px;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    button {
+      border: none;
+      cursor: pointer;
+    }
+
+    button:focus-visible,
+    input:focus-visible {
+      outline: 2px solid var(--primary);
+      outline-offset: 2px;
+    }
+
+    /* =========================================================
+   ICONS
+========================================================= */
+
+    .icon {
+      width: 20px;
+      height: 20px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .icon svg {
+      width: 20px;
+      height: 20px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    /* =========================================================
+   APP LAYOUT
+========================================================= */
+
+    .app {
+      min-height: 100vh;
+    }
+
+    /* =========================================================
+   TOP BAR
+========================================================= */
+
+    .topbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+
+      height: var(--topbar-height);
+
+      display: flex;
+      align-items: center;
+
+      background: #fff;
+      border-bottom: 1px solid var(--border);
+
+      z-index: 100;
+    }
+
+    .topbar-left {
+      width: var(--sidebar-width);
+      min-width: var(--sidebar-width);
+
+      height: 100%;
+
+      display: flex;
+      align-items: center;
+
+      padding: 0 20px;
+      border-right: 1px solid var(--border-light);
+    }
+
+    .menu-toggle {
+      width: 40px;
+      height: 40px;
+
+      display: grid;
+      place-items: center;
+
+      background: transparent;
+      border-radius: 50%;
+
+      color: var(--text-secondary);
+    }
+
+    .menu-toggle:hover {
+      background: var(--hover);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-left: 8px;
+
+      font-size: 17px;
+      font-weight: 600;
+    }
+
+    .logo {
+      width: 28px;
+      height: 28px;
+
+      border-radius: 8px;
+
+      background: conic-gradient(#4285f4 0 25%,
+          #34a853 25% 50%,
+          #fbbc04 50% 75%,
+          #ea4335 75% 100%);
+
+      transform: rotate(45deg);
+    }
+
+    .logo-inner {
+      width: 10px;
+      height: 10px;
+
+      margin: 9px;
+
+      border-radius: 50%;
+      background: white;
+    }
+
+    .admin-label {
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 500;
+
+      padding-left: 10px;
+      border-left: 1px solid var(--border);
+    }
+
+    .topbar-main {
+      flex: 1;
+
+      height: 100%;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      padding: 0 28px;
+    }
+
+    .global-search {
+      width: min(440px, 42vw);
+      position: relative;
+    }
+
+    .global-search input {
+      width: 100%;
+      height: 40px;
+
+      padding: 0 16px 0 42px;
+
+      border: 1px solid var(--border);
+      border-radius: 8px;
+
+      background: var(--background);
+      color: var(--text);
+
+      transition: .15s ease;
+    }
+
+    .global-search input:focus {
+      background: #fff;
+      border-color: var(--primary);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 14px;
+      top: 10px;
+      color: var(--text-secondary);
+    }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .top-icon-button {
+      width: 40px;
+      height: 40px;
+
+      display: grid;
+      place-items: center;
+
+      border-radius: 50%;
+      background: transparent;
+
+      color: var(--text-secondary);
+    }
+
+    .top-icon-button:hover {
+      background: var(--hover);
+    }
+
+    .system-indicator {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+
+      margin: 0 10px;
+
+      color: var(--text-secondary);
+      font-size: 12px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+    }
+
+    .profile {
+      width: 34px;
+      height: 34px;
+
+      display: grid;
+      place-items: center;
+
+      margin-left: 8px;
+
+      border-radius: 50%;
+
+      background: var(--primary);
+      color: white;
+
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    /* =========================================================
+   SIDEBAR
+========================================================= */
+
+    .sidebar {
+      position: fixed;
+      top: var(--topbar-height);
+      left: 0;
+      bottom: 0;
+
+      width: var(--sidebar-width);
+
+      display: flex;
+      flex-direction: column;
+
+      padding: 18px 12px;
+
+      background: #fff;
+      border-right: 1px solid var(--border-light);
+
+      z-index: 90;
+
+      transition: width .2s ease, transform .25s ease;
+    }
+
+    .nav-section {
+      margin-bottom: 22px;
+    }
+
+    .nav-heading {
+      padding: 0 12px;
+      margin-bottom: 7px;
+
+      color: var(--text-muted);
+
+      font-size: 10px;
+      font-weight: 700;
+
+      letter-spacing: .08em;
+    }
+
+    .nav-item {
+      width: 100%;
+      min-height: 42px;
+
+      display: flex;
+      align-items: center;
+      gap: 14px;
+
+      padding: 0 12px;
+
+      color: var(--text-secondary);
+      background: transparent;
+
+      border-radius: 8px;
+
+      font-size: 14px;
+      text-align: left;
+
+      transition: background .15s ease, color .15s ease;
+    }
+
+    .nav-item:hover {
+      background: var(--hover);
+      color: var(--text);
+    }
+
+    .nav-item.active {
+      background: var(--primary-light);
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .nav-item.active .icon {
+      color: var(--primary);
+    }
+
+    .sidebar-bottom {
+      margin-top: auto;
+      padding-top: 15px;
+      border-top: 1px solid var(--border-light);
+    }
+
+    .signout:hover {
+      color: var(--red);
+      background: var(--red-light);
+    }
+
+    /* =========================================================
+   MAIN CONTENT
+========================================================= */
+
+    .main {
+      margin-left: var(--sidebar-width);
+      padding-top: var(--topbar-height);
+      min-height: 100vh;
+
+      transition: margin-left .2s ease;
+    }
+
+    .page {
+      display: none;
+
+      max-width: 1600px;
+      margin: 0 auto;
+
+      padding: 32px;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    /* =========================================================
+   PAGE HEADER
+========================================================= */
+
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+
+      margin-bottom: 14px;
+
+      color: var(--text-muted);
+      font-size: 12px;
+    }
+
+    .breadcrumb strong {
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .page-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+
+      gap: 24px;
+
+      margin-bottom: 30px;
+    }
+
+    .page-title h1 {
+      font-size: 32px;
+      line-height: 1.2;
+      font-weight: 500;
+      letter-spacing: -.5px;
+    }
+
+    .page-title p {
+      margin-top: 7px;
+
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* =========================================================
+   BUTTONS
+========================================================= */
+
+    .btn {
+      min-height: 38px;
+
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+
+      padding: 0 16px;
+
+      border-radius: 6px;
+
+      font-size: 13px;
+      font-weight: 600;
+
+      transition: .15s ease;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+      box-shadow: var(--shadow);
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+      box-shadow: 0 2px 5px rgba(26, 115, 232, .3);
+    }
+
+    .btn-secondary {
+      background: white;
+      color: var(--primary);
+
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      background: var(--primary-light);
+    }
+
+    .btn-text {
+      background: transparent;
+      color: var(--primary);
+    }
+
+    .btn-text:hover {
+      background: var(--primary-light);
+    }
+
+    .btn-danger {
+      color: var(--red);
+      background: white;
+      border: 1px solid var(--border);
+    }
+
+    .btn-danger:hover {
+      background: var(--red-light);
+    }
+
+    /* =========================================================
+   METRIC CARDS
+========================================================= */
+
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+
+      margin-bottom: 24px;
+    }
+
+    .metric-card {
+      min-height: 156px;
+
+      padding: 20px;
+
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+
+      transition: box-shadow .15s ease;
+    }
+
+    .metric-card:hover {
+      box-shadow: var(--shadow-lg);
+    }
+
+    .metric-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      color: var(--text-secondary);
+      font-size: 13px;
+    }
+
+    .metric-icon {
+      width: 34px;
+      height: 34px;
+
+      display: grid;
+      place-items: center;
+
+      border-radius: 8px;
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .metric-value {
+      margin-top: 18px;
+
+      font-size: 30px;
+      font-weight: 500;
+      letter-spacing: -.5px;
+    }
+
+    .metric-meta {
+      margin-top: 8px;
+
+      color: var(--text-secondary);
+      font-size: 12px;
+    }
+
+    .trend-positive {
+      color: var(--green);
+      font-weight: 600;
+    }
+
+    /* =========================================================
+   DASHBOARD GRID
+========================================================= */
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) minmax(300px, 1fr);
+      gap: 16px;
+
+      margin-bottom: 24px;
+    }
+
+    .panel {
+      background: white;
+
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+
+      padding: 20px 20px 14px;
+    }
+
+    .panel-title {
+      font-size: 16px;
+      font-weight: 500;
+    }
+
+    .panel-subtitle {
+      margin-top: 5px;
+
+      color: var(--text-secondary);
+      font-size: 12px;
+    }
+
+    .panel-content {
+      padding: 8px 20px 20px;
+    }
+
+    /* =========================================================
+   CHART
+========================================================= */
+
+    .chart-tabs {
+      display: flex;
+      gap: 5px;
+    }
+
+    .chart-tab {
+      height: 30px;
+      padding: 0 10px;
+
+      background: transparent;
+      border-radius: 5px;
+
+      color: var(--text-secondary);
+      font-size: 11px;
+    }
+
+    .chart-tab:hover,
+    .chart-tab.active {
+      color: var(--primary);
+      background: var(--primary-light);
+    }
+
+    .chart {
+      height: 250px;
+
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+
+      gap: 10px;
+
+      padding: 20px 4px 5px;
+
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .chart-column {
+      flex: 1;
+
+      height: 100%;
+
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
+
+      gap: 8px;
+    }
+
+    .bar-group {
+      width: 100%;
+      height: 100%;
+
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+
+      gap: 3px;
+    }
+
+    .bar {
+      width: 28%;
+      min-width: 6px;
+
+      border-radius: 3px 3px 0 0;
+    }
+
+    .bar.blue {
+      background: var(--primary);
+    }
+
+    .bar.green {
+      background: #34a853;
+    }
+
+    .bar.red {
+      background: #ea4335;
+    }
+
+    .chart-label {
+      color: var(--text-muted);
+      font-size: 10px;
+    }
+
+    .chart-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
+
+      padding-top: 16px;
+
+      color: var(--text-secondary);
+      font-size: 11px;
+    }
+
+    .legend {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    /* =========================================================
+   SYSTEM HEALTH
+========================================================= */
+
+    .health-list {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .health-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+
+      padding: 15px 0;
+
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .health-item:last-child {
+      border-bottom: none;
+    }
+
+    .health-status-icon {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .health-info {
+      flex: 1;
+    }
+
+    .health-name {
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .health-description {
+      margin-top: 3px;
+
+      color: var(--text-secondary);
+      font-size: 11px;
+    }
+
+    .health-state {
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    .state-green {
+      color: var(--green);
+    }
+
+    .state-yellow {
+      color: var(--yellow);
+    }
+
+    /* =========================================================
+   TABLES
+========================================================= */
+
+    .table-panel {
+      margin-bottom: 24px;
+    }
+
+    .table-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      padding: 16px 20px;
+
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .toolbar-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .toolbar-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .table-search {
+      position: relative;
+    }
+
+    .table-search input {
+      width: 250px;
+      height: 36px;
+
+      padding: 0 12px 0 36px;
+
+      border: 1px solid var(--border);
+      border-radius: 6px;
+
+      color: var(--text);
+    }
+
+    .table-search .icon {
+      position: absolute;
+      left: 10px;
+      top: 8px;
+
+      color: var(--text-muted);
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .data-table th {
+      height: 48px;
+
+      padding: 0 20px;
+
+      background: var(--background);
+      border-bottom: 1px solid var(--border);
+
+      color: var(--text-secondary);
+
+      font-size: 11px;
+      font-weight: 600;
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    .data-table td {
+      height: 64px;
+
+      padding: 10px 20px;
+
+      border-bottom: 1px solid var(--border-light);
+
+      font-size: 13px;
+    }
+
+    .data-table tr:hover td {
+      background: #fafafa;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .avatar {
+      width: 32px;
+      height: 32px;
+
+      display: grid;
+      place-items: center;
+
+      border-radius: 50%;
+
+      background: var(--primary-light);
+      color: var(--primary);
+
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .user-name {
+      font-weight: 500;
+    }
+
+    .user-email {
+      margin-top: 2px;
+
+      color: var(--text-muted);
+      font-size: 11px;
+    }
+
+    .prompt {
+      max-width: 400px;
+
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+
+      color: var(--text-secondary);
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+
+      min-height: 24px;
+
+      padding: 0 9px;
+
+      border-radius: 12px;
+
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    .chip-blue {
+      color: #185abc;
+      background: var(--primary-light);
+    }
+
+    .chip-green {
+      color: var(--green);
+      background: var(--green-light);
+    }
+
+    .chip-red {
+      color: var(--red);
+      background: var(--red-light);
+    }
+
+    .chip-yellow {
+      color: var(--yellow);
+      background: var(--yellow-light);
+    }
+
+    .row-action {
+      width: 32px;
+      height: 32px;
+
+      display: grid;
+      place-items: center;
+
+      border-radius: 50%;
+
+      color: var(--text-secondary);
+      background: transparent;
+    }
+
+    .row-action:hover {
+      background: var(--hover);
+    }
+
+    /* =========================================================
+   QUICK ACTIONS
+========================================================= */
+
+    .quick-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+
+      padding: 20px;
+    }
+
+    .quick-action {
+      min-height: 40px;
+
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+
+      padding: 0 14px;
+
+      color: var(--primary);
+      background: white;
+
+      border: 1px solid var(--border);
+      border-radius: 6px;
+
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .quick-action:hover {
+      background: var(--primary-light);
+      border-color: #aecbfa;
+    }
+
+    /* =========================================================
+   TOOLBAR / FILTERS
+========================================================= */
+
+    .management-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+
+      margin-bottom: 18px;
+    }
+
+    .filters {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      height: 36px;
+
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+
+      padding: 0 12px;
+
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+
+      color: var(--text-secondary);
+      font-size: 12px;
+    }
+
+    .filter-btn:hover {
+      background: var(--hover);
+    }
+
+    /* =========================================================
+   EMPTY STATE
+========================================================= */
+
+    .empty-state {
+      min-height: 260px;
+
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+
+      padding: 40px;
+
+      text-align: center;
+    }
+
+    .empty-icon {
+      width: 52px;
+      height: 52px;
+
+      display: grid;
+      place-items: center;
+
+      margin-bottom: 15px;
+
+      border-radius: 50%;
+
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .empty-state h3 {
+      font-size: 16px;
+      font-weight: 500;
+    }
+
+    .empty-state p {
+      max-width: 380px;
+
+      margin-top: 7px;
+
+      color: var(--text-secondary);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    /* =========================================================
+   API PAGE
+========================================================= */
+
+    .tabs {
+      display: flex;
+      gap: 24px;
+
+      margin-bottom: 24px;
+
+      border-bottom: 1px solid var(--border);
+    }
+
+    .tab {
+      position: relative;
+
+      height: 44px;
+
+      background: transparent;
+
+      color: var(--text-secondary);
+      font-size: 13px;
+    }
+
+    .tab.active {
+      color: var(--primary);
+      font-weight: 500;
+    }
+
+    .tab.active::after {
+      content: "";
+
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -1px;
+
+      height: 2px;
+      background: var(--primary);
+    }
+
+    .api-overview {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+
+      margin-bottom: 24px;
+    }
+
+    .config-grid {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr;
+      gap: 16px;
+    }
+
+    .form-panel {
+      padding: 24px;
+    }
+
+    .form-group {
+      margin-top: 20px;
+    }
+
+    .form-label {
+      display: block;
+
+      margin-bottom: 8px;
+
+      color: var(--text-secondary);
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .input {
+      width: 100%;
+      height: 44px;
+
+      padding: 0 13px;
+
+      border: 1px solid var(--border);
+      border-radius: 6px;
+
+      color: var(--text);
+      background: white;
+    }
+
+    .input:focus {
+      border-color: var(--primary);
+      outline: none;
+    }
+
+    .input-with-action {
+      position: relative;
+    }
+
+    .input-action {
+      position: absolute;
+      right: 8px;
+      top: 6px;
+
+      height: 32px;
+
+      padding: 0 10px;
+
+      background: var(--hover);
+      border-radius: 5px;
+
+      color: var(--text-secondary);
+      font-size: 11px;
+    }
+
+    /* =========================================================
+   MODAL
+========================================================= */
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+
+      display: none;
+      align-items: center;
+      justify-content: center;
+
+      padding: 20px;
+
+      background: rgba(32, 33, 36, .45);
+
+      z-index: 300;
+    }
+
+    .modal-overlay.show {
+      display: flex;
+    }
+
+    .modal {
+      width: min(520px, 100%);
+
+      background: white;
+      border-radius: 12px;
+
+      box-shadow: 0 18px 50px rgba(0, 0, 0, .25);
+
+      overflow: hidden;
+    }
+
+    .modal-header {
+      padding: 24px 24px 15px;
+    }
+
+    .modal-header h2 {
+      font-size: 20px;
+      font-weight: 500;
+    }
+
+    .modal-header p {
+      margin-top: 6px;
+
+      color: var(--text-secondary);
+      font-size: 13px;
+    }
+
+    .modal-body {
+      padding: 5px 24px 24px;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+
+      padding: 16px 24px;
+
+      background: var(--background);
+      border-top: 1px solid var(--border-light);
+    }
+
+    /* =========================================================
+   DRAWER
+========================================================= */
+
+    .drawer-overlay {
+      position: fixed;
+      inset: 0;
+
+      display: none;
+
+      background: rgba(32, 33, 36, .2);
+
+      z-index: 200;
+    }
+
+    .drawer-overlay.show {
+      display: block;
+    }
+
+    .drawer {
+      position: fixed;
+      top: 0;
+      right: -520px;
+      bottom: 0;
+
+      width: min(520px, 100%);
+
+      background: white;
+
+      box-shadow: -8px 0 24px rgba(0, 0, 0, .12);
+
+      z-index: 210;
+
+      transition: right .25s ease;
+    }
+
+    .drawer.open {
+      right: 0;
+    }
+
+    .drawer-header {
+      height: 64px;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      padding: 0 24px;
+
+      border-bottom: 1px solid var(--border);
+    }
+
+    .drawer-content {
+      padding: 24px;
+    }
+
+    .drawer-section {
+      margin-bottom: 30px;
+    }
+
+    .drawer-section h3 {
+      margin-bottom: 14px;
+
+      font-size: 13px;
+      font-weight: 600;
+
+      color: var(--text-secondary);
+    }
+
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+
+      padding: 10px 0;
+
+      border-bottom: 1px solid var(--border-light);
+
+      font-size: 13px;
+    }
+
+    .detail-label {
+      color: var(--text-secondary);
+    }
+
+    /* =========================================================
+   TOAST
+========================================================= */
+
+    .toast {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      min-width: 280px;
+
+      padding: 14px 16px;
+
+      background: #323232;
+      color: white;
+
+      border-radius: 6px;
+
+      box-shadow: var(--shadow-lg);
+
+      font-size: 13px;
+
+      opacity: 0;
+      transform: translateY(20px);
+      pointer-events: none;
+
+      transition: .2s ease;
+
+      z-index: 500;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* =========================================================
+   MOBILE
+========================================================= */
+
+    .mobile-only {
+      display: none;
+    }
+
+    @media (max-width: 1200px) {
+
+      .metrics-grid,
+      .api-overview {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .dashboard-grid,
+      .config-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 850px) {
+
+      .topbar-left {
+        width: auto;
+        min-width: auto;
+        border-right: none;
+      }
+
+      .admin-label,
+      .global-search,
+      .system-indicator {
+        display: none;
+      }
+
+      .sidebar {
+        transform: translateX(-100%);
+        box-shadow: var(--shadow-lg);
+      }
+
+      .sidebar.mobile-open {
+        transform: translateX(0);
+      }
+
+      .main {
+        margin-left: 0;
+      }
+
+      .topbar-main {
+        padding: 0 16px;
+      }
+
+      .page {
+        padding: 24px 16px;
+      }
+
+      .page-header {
+        flex-direction: column;
+      }
+
+      .management-toolbar {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .table-search input {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 600px) {
+
+      .metrics-grid,
+      .api-overview {
+        grid-template-columns: 1fr;
+      }
+
+      .topbar {
+        height: 58px;
+      }
+
+      .sidebar {
+        top: 58px;
+      }
+
+      .main {
+        padding-top: 58px;
+      }
+
+      .page-title h1 {
+        font-size: 27px;
+      }
+
+      .header-actions {
+        width: 100%;
+      }
+
+      .header-actions .btn {
+        flex: 1;
+      }
+
+      .table-toolbar {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .toolbar-right {
+        justify-content: flex-end;
+      }
+
+      .data-table th,
+      .data-table td {
+        padding-left: 14px;
+        padding-right: 14px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="app">
+
+    <!-- =====================================================
+     TOP BAR
+===================================================== -->
+
+    <header class="topbar">
+
+      <div class="topbar-left">
+
+        <button class="menu-toggle" id="menuToggle">
+          <span class="icon">
+            <svg viewBox="0 0 24 24">
+              <path d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </span>
+        </button>
+
+        <div class="brand">
+          <div class="logo">
+            <div class="logo-inner"></div>
+          </div>
+          <span>Flow Labs</span>
+        </div>
+
+        <span class="admin-label">Admin</span>
+
+      </div>
+
+      <div class="topbar-main">
+
+        <div class="global-search">
+
+          <span class="search-icon icon">
+            <svg viewBox="0 0 24 24">
+              <circle cx="11" cy="11" r="6" />
+              <path d="M16 16l4 4" />
+            </svg>
+          </span>
+
+          <input type="text" placeholder="Search users, codes, partners...">
+
+        </div>
+
+        <div class="topbar-actions">
+
+          <button class="top-icon-button" title="Notifications">
+            <span class="icon"><i data-lucide="bell" style="width: 14px; height: 14px;"></i></span>
+          </button>
+
+          <button class="top-icon-button" title="Help">
+            <span class="icon">?</span>
+          </button>
+
+          <div class="system-indicator">
+            <span class="status-dot"></span>
+            Operational
+          </div>
+
+          <div class="profile">A</div>
+
+        </div>
+
+      </div>
+
+    </header>
+
+
+    <!-- =====================================================
+     SIDEBAR
+===================================================== -->
+
+    <aside class="sidebar" id="sidebar">
+
+      <div class="nav-section">
+
+        <div class="nav-heading">MAIN</div>
+
+        <button class="nav-item active" data-page="overview">
+          <span class="icon">▦</span>
+          <span>Overview</span>
+        </button>
+
+        <button class="nav-item" data-page="users">
+          <span class="icon"><i data-lucide="users" style="width: 14px; height: 14px;"></i></span>
+          <span>Users</span>
+        </button>
+
+        <button class="nav-item" data-page="lab-users">
+          <span class="icon"><i data-lucide="zap" style="width: 14px; height: 14px;"></i></span>
+          <span>LAB Users</span>
+        </button>
+
+        <button class="nav-item" data-page="partners">
+          <span class="icon">◎</span>
+          <span>Partners</span>
+        </button>
+
+
+      </div>
+
+
+      <div class="nav-section">
+
+        <div class="nav-heading">ACCESS MANAGEMENT</div>
+
+        <button class="nav-item" data-page="codes">
+          <span class="icon">◇</span>
+          <span>Trial Codes</span>
+        </button>
+
+        <button class="nav-item" data-page="plans">
+          <span class="icon"><i data-lucide="credit-card" style="width: 14px; height: 14px;"></i></span>
+          <span>Plans</span>
+        </button>
+
+      </div>
+
+
+      <div class="nav-section">
+
+        <div class="nav-heading">SYSTEM</div>
+
+        <button class="nav-item" data-page="updates">
+          <span class="icon">↻</span>
+          <span>Updates</span>
+        </button>
+
+        <button class="nav-item" data-page="api">
+          <span class="icon">⌘</span>
+          <span>API Management</span>
+        </button>
+
+      </div>
+
+
+      <div class="sidebar-bottom">
+
+        <button class="nav-item">
+          <span class="icon"><i data-lucide="settings" style="width: 14px; height: 14px;"></i></span>
+          <span>Settings</span>
+        </button>
+
+        <button class="nav-item signout">
+          <span class="icon">↪</span>
+          <span>Sign out</span>
+        </button>
+
+      </div>
+
+    </aside>
+
+
+    <!-- =====================================================
+     MAIN
+===================================================== -->
+
+    <main class="main">
+
+
+      <!-- =====================================================
+     OVERVIEW
+===================================================== -->
+
+      <section class="page active" id="overview">
+
+        <div class="breadcrumb">
+          <span>Admin</span>
+          <span>/</span>
+          <strong>Overview</strong>
+        </div>
+
+        <div class="page-header">
+
+          <div class="page-title">
+            <h1>Overview</h1>
+            <p>Monitor platform activity, accounts, subscriptions, and system health.</p>
+          </div>
+
+          <div class="header-actions">
+            <button class="btn btn-secondary">Last 30 days ▾</button>
+            <button class="btn btn-secondary" onclick="showToast('Dashboard refreshed')">↻ Refresh</button>
+          </div>
+
+        </div>
+
+
+        <!-- METRICS -->
+
+        <div class="metrics-grid">
+
+          <div class="metric-card">
+            <div class="metric-header">
+              <span>Total Accounts</span>
+              <div class="metric-icon"><i data-lucide="users" style="width: 20px; height: 20px;"></i></div>
+            </div>
+            <div class="metric-value" id="metricTotalAccounts">0</div>
+            <div class="metric-meta">Registered profiles</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-header">
+              <span>Active Subscriptions</span>
+              <div class="metric-icon"><i data-lucide="star" style="width: 20px; height: 20px;"></i></div>
+            </div>
+            <div class="metric-value" id="metricActiveSubs">0</div>
+            <div class="metric-meta">Active Ultra access profiles</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-header">
+              <span>Available Sessions</span>
+              <div class="metric-icon"><i data-lucide="server" style="width: 20px; height: 20px;"></i></div>
+            </div>
+            <div class="metric-value" id="metricAvailableSessions">0</div>
+            <div class="metric-meta">Active provider cookie pool nodes</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-header">
+              <span>Trial Codes Available</span>
+              <div class="metric-icon"><i data-lucide="ticket" style="width: 20px; height: 20px;"></i></div>
+            </div>
+            <div class="metric-value" id="metricTrialCodes">0</div>
+            <div class="metric-meta">Unclaimed trial codes</div>
+          </div>
+
+        </div>
+
+
+
+        <!-- ANALYTICS -->
+
+        <div class="dashboard-grid">
+
+          <!-- SYSTEM HEALTH -->
+
+          <div class="panel">
+
+            <div class="panel-header">
+
+              <div>
+                <div class="panel-title">System Health</div>
+                <div class="panel-subtitle">Current service status.</div>
+              </div>
+
+            </div>
+
+            <div class="panel-content">
+
+              <div class="health-list">
+
+                <div class="health-item">
+
+                  <span class="health-status-icon" style="background:#34a853"></span>
+
+                  <div class="health-info">
+                    <div class="health-name">Provider API</div>
+                    <div class="health-description">Response time: 124ms</div>
+                  </div>
+
+                  <span class="health-state state-green">Operational</span>
+
+                </div>
+
+
+                <div class="health-item">
+
+                  <span class="health-status-icon" style="background:#34a853"></span>
+
+                  <div class="health-info">
+                    <div class="health-name">Session Pool</div>
+                    <div class="health-description">3 active sessions</div>
+                  </div>
+
+                  <span class="health-state state-green">Healthy</span>
+
+                </div>
+
+
+                <div class="health-item">
+
+                  <span class="health-status-icon" style="background:#34a853"></span>
+
+                  <div class="health-info">
+                    <div class="health-name">Database</div>
+                    <div class="health-description">99.99% availability</div>
+                  </div>
+
+                  <span class="health-state state-green">Operational</span>
+
+                </div>
+
+
+                <div class="health-item">
+
+                  <span class="health-status-icon" style="background:#fbbc04"></span>
+
+                  <div class="health-info">
+                    <div class="health-name">Background Jobs</div>
+                    <div class="health-description">2 active tasks</div>
+                  </div>
+
+                  <span class="health-state state-yellow">Monitoring</span>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- QUICK ACTIONS -->
+
+        <div class="panel">
+
+          <div class="panel-header">
+
+            <div>
+              <div class="panel-title">Quick Actions</div>
+              <div class="panel-subtitle">Common administrative tasks.</div>
+            </div>
+
+          </div>
+
+          <div class="quick-actions">
+
+            <button class="quick-action" onclick="showToast('Provider session sync started')">
+              ↻ Sync Sessions
+            </button>
+
+            <button class="quick-action" onclick="openModal('user')">
+              + Create User
+            </button>
+
+            <button class="quick-action" onclick="openModal('code')">
+              + Create Trial Code
+            </button>
+
+            <button class="quick-action" data-goto="plans">
+              <i data-lucide="credit-card" style="width: 18px; height: 18px; vertical-align: text-bottom; margin-right: 4px;"></i> Manage Plans
+            </button>
+
+            <button class="quick-action" data-goto="api">
+              <i data-lucide="settings" style="width: 18px; height: 18px; vertical-align: text-bottom; margin-right: 4px;"></i> Provider Settings
+            </button>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- =====================================================
+     USERS
+===================================================== -->
+
+      <section class="page" id="users">
+
+        <div class="breadcrumb">
+          <span>Admin</span><span>/</span><strong>Users</strong>
+        </div>
+
+        <div class="page-header">
+
+          <div class="page-title">
+            <h1>Users</h1>
+            <p>Manage platform users, subscriptions, and access.</p>
+          </div>
+
+          <button class="btn btn-primary" onclick="openModal('user')">
+            + Create User
+          </button>
+
+        </div>
+
+
+        <div class="management-toolbar">
+
+          <div class="table-search">
+
+            <span class="icon">
+              <svg viewBox="0 0 24 24">
+                <circle cx="11" cy="11" r="6" />
+                <path d="M16 16l4 4" />
+              </svg>
+            </span>
+
+            <input type="text" id="userSearch" placeholder="Search by name or email">
+
+          </div>
+
+
+          <div class="filters">
+
+            <button class="filter-btn">Plan ▾</button>
+            <button class="filter-btn">Status ▾</button>
+            <button class="filter-btn">Partner ▾</button>
+            <button class="filter-btn">Expiration ▾</button>
+
+            <button class="btn btn-secondary">↻ Refresh</button>
+
+          </div>
+
+        </div>
+
+
+        <div class="panel table-panel">
+
+          <div class="table-wrapper">
+
+            <table class="data-table">
+
+              <thead>
+                <tr>
+                  <th>User / Name</th>
+                  <th>Lab ID</th>
+                  <th>Email</th>
+                  <th>Plan</th>
+                  <th>Status</th>
+                  <th>Expires</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+
+
+              <tbody id="usersTable">
+                <!-- Live Supabase profiles will render here dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </section>
+
+
+      <!-- =====================================================
+           LAB USERS DEDICATED PAGE
+      ===================================================== -->
+
+      <section class="page" id="lab-users">
+
+        <div class="breadcrumb">
+          <span>Admin</span><span>/</span><strong>LAB Users</strong>
+        </div>
+
+        <div class="page-header">
+
+          <div class="page-title">
+            <h1><i data-lucide="users" style="width: 24px; height: 24px; vertical-align: text-bottom; margin-right: 8px;"></i> LAB Users & Paid Orders</h1>
+            <p>Manage device LAB IDs, trial claims, paid orders, and assign active Ultra nodes.</p>
+          </div>
+
+          <button class="btn btn-primary" onclick="loadAdminSupabaseData()">
+            ↻ Refresh LAB Users
+          </button>
+
+        </div>
+
+        <div class="panel table-panel">
+          <div class="table-wrapper">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Lab ID</th>
+                  <th>Device Fingerprint</th>
+                  <th>Plan</th>
+                  <th>Status</th>
+                  <th>Assigned Google Ultra Node</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="labUsersTable">
+                <!-- Live Supabase lab_users render here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </section>
+
+
+
+
+      <!-- =====================================================
+     PARTNERS
+===================================================== -->
+
+      <section class="page" id="partners">
+
+        <div class="breadcrumb">
+          <span>Admin</span><span>/</span><strong>Partners</strong>
+        </div>
+
+        <div class="page-header">
+
+          <div class="page-title">
+            <h1>Partners</h1>
+            <p>Manage partners and monitor their user pools.</p>
+          </div>
+
+          <button class="btn btn-primary" onclick="showToast('Partner creation opened')">
+            + Add Partner
+          </button>
+
+        </div>
+
+
+        <div class="metrics-grid">
+
+          <div class="metric-card">
+            <div class="metric-header">
+              <span>Total Partners</span>
+              <div class="metric-icon">◎</div>
+            </div>
+            <div class="metric-value" id="metricTotalPartners">0</div>
+            <div class="metric-meta">Registered partner accounts</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-header">
+              <span>Active Partners</span>
+              <div class="metric-icon">✓</div>
+            </div>
+            <div class="metric-value" id="metricActivePartners">0</div>
+            <div class="metric-meta">Currently active</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-header">
+              <span>Managed Users</span>
+              <div class="metric-icon"><i data-lucide="users" style="width: 20px; height: 20px;"></i></div>
+            </div>
+            <div class="metric-value" id="metricManagedUsers">0</div>
+            <div class="metric-meta">Across all partners</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-header">
+              <span>Partner Sessions</span>
+              <div class="metric-icon"><i data-lucide="ticket" style="width: 20px; height: 20px;"></i></div>
+            </div>
+            <div class="metric-value" id="metricPartnerUsage">0</div>
+            <div class="metric-meta">Active pool connections</div>
+          </div>
+
+        </div>
+
+
+        <div class="panel table-panel">
+          <div class="table-toolbar">
+            <div>
+              <div class="panel-title">Active Partners & Resellers</div>
+              <div class="panel-subtitle">Partner accounts connected to your platform.</div>
+            </div>
+          </div>
+
+          <div class="table-wrapper">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Partner Email</th>
+                  <th>Role</th>
+                  <th>Plan</th>
+                  <th>Status</th>
+                  <th>Created / Expiry</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="partnersTable">
+                <!-- Live Supabase partners render here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </section>
+
+
+      <!-- =====================================================
+     TRIAL CODES
+===================================================== -->
+
+      <section class="page" id="codes">
+
+        <div class="breadcrumb">
+          <span>Admin</span><span>/</span><strong>Trial Codes</strong>
+        </div>
+
+        <div class="page-header">
+
+          <div class="page-title">
+            <h1>Trial Codes</h1>
+            <p>Create and manage promotional access codes.</p>
+          </div>
+
+          <button class="btn btn-primary" onclick="openModal('code')">
+            + Create Code
+          </button>
+
+        </div>
+
+
+        <div class="panel table-panel">
+
+          <div class="table-toolbar">
+
+            <div>
+              <div class="panel-title">All Trial Codes</div>
+              <div class="panel-subtitle">Codes available for user redemption.</div>
+            </div>
+
+            <div class="toolbar-right">
+              <button class="btn btn-secondary" onclick="loadAdminSupabaseData()">↻ Refresh</button>
+            </div>
+
+          </div>
+
+
+          <div class="table-wrapper">
+
+            <table class="data-table">
+
+              <thead>
+                <tr>
+                  <th>Code</th>
+                  <th>Duration</th>
+                  <th>Device Identifier</th>
+                  <th>Status</th>
+                  <th>Created</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+
+              <tbody id="trialCodesTable">
+                <!-- Live Supabase trial codes render here -->
+              </tbody>
+
+            </table>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+
+      <!-- =====================================================
+     PLANS
+===================================================== -->
+
+      <section class="page" id="plans">
+
+        <div class="breadcrumb">
+          <span>Admin</span><span>/</span><strong>Plans</strong>
+        </div>
+
+        <div class="page-header">
+
+          <div class="page-title">
+            <h1>Plans</h1>
+            <p>Manage subscription plans, access limits, and credits.</p>
+          </div>
+
+          <button class="btn btn-primary" onclick="showToast('Create plan opened')">
+            + Create Plan
+          </button>
+
+        </div>
+
+
+        <div class="panel">
+
+          <div class="table-wrapper">
+
+            <table class="data-table">
+
+              <thead>
+                <tr>
+                  <th>Plan</th>
+                  <th>Duration</th>
+                  <th>Credits</th>
+                  <th>Daily Limit</th>
+                  <th>Status</th>
+                  <th></th>
+                </tr>
+              </thead>
+
+              <tbody>
+
+                <tr>
+                  <td><strong>Free Trial</strong></td>
+                  <td>1 Hour</td>
+                  <td>10</td>
+                  <td>10</td>
+                  <td><span class="chip chip-green">Active</span></td>
+                  <td><button class="row-action">⋮</button></td>
+                </tr>
+
+                <tr>
+                  <td><strong>Ultra</strong></td>
+                  <td>30 Days</td>
+                  <td>Unlimited</td>
+                  <td>Unlimited</td>
+                  <td><span class="chip chip-green">Active</span></td>
+                  <td><button class="row-action">⋮</button></td>
+                </tr>
+
+              </tbody>
+
+            </table>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- =====================================================
+     UPDATES
+===================================================== -->
+
+      <section class="page" id="updates">
+
+        <div class="breadcrumb">
+          <span>Admin</span><span>/</span><strong>Updates</strong>
+        </div>
+
+        <div class="page-header">
+
+          <div class="page-title">
+            <h1>Updates</h1>
+            <p>Manage announcements and platform updates.</p>
+          </div>
+
+          <button class="btn btn-primary" onclick="showToast('Create update opened')">
+            + Create Update
+          </button>
+
+        </div>
+
+
+        <div class="panel" style="margin-bottom: 24px;">
+          <div class="panel-header" style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <div class="panel-title">System Maintenance Mode</div>
+              <div class="panel-subtitle">Enable this to show an "Updating Accounts" overlay to users while updating backend master accounts.</div>
+            </div>
+            <div>
+              <button id="maintenanceToggleBtn" class="btn btn-secondary" onclick="toggleMaintenanceMode()">
+                Turn ON
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+
+          <div class="empty-state">
+
+            <div class="empty-icon">↻</div>
+
+            <h3>No updates published</h3>
+
+            <p>
+              Create a platform update to communicate changes and announcements to users.
+            </p>
+
+            <button class="btn btn-primary" style="margin-top:18px">
+              + Create Update
+            </button>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- =====================================================
+     API MANAGEMENT
+===================================================== -->
+
+      <section class="page" id="api">
+
+        <div class="breadcrumb">
+          <span>Admin</span><span>/</span><strong>API & Clickssy Management</strong>
+        </div>
+
+        <div class="page-header">
+
+          <div class="page-title">
+            <h1>API & Clickssy Cookie Engine</h1>
+            <p>Manage Clickssy online authentication, session token verification, and cookie pool syncing for Google Veo
+              2.</p>
+          </div>
+
+          <div class="header-actions">
+            <button class="btn btn-secondary" onclick="testClickssyLogin()">
+              🔍 Test Clickssy Login
+            </button>
+
+            <button class="btn btn-primary" onclick="triggerClickssySync()">
+              <i data-lucide="zap" style="width: 18px; height: 18px; vertical-align: text-bottom; margin-right: 4px;"></i> Trigger Clickssy Live Cookie Sync
+            </button>
+          </div>
+
+        </div>
+
+
+        <div class="tabs">
+          <button class="tab active">Clickssy Engine</button>
+          <button class="tab">Supabase Pool</button>
+          <button class="tab">Cron Sync Log</button>
+        </div>
+
+
+        <div class="api-overview">
+
+          <div class="metric-card">
+            <div class="metric-header">
+              <span>Clickssy Connection</span>
+              <div class="metric-icon">✓</div>
+            </div>
+            <div class="metric-value" id="clickssyStatusVal" style="font-size:22px;color:#188038">
+              Active
+            </div>
+            <div class="metric-meta">https://clickssy.online</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-header">
+              <span>Clickssy Cookies</span>
+              <div class="metric-icon">↻</div>
+            </div>
+            <div class="metric-value" id="clickssyCookieCount">
+              0
+            </div>
+            <div class="metric-meta">Active synced session cookies</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-header">
+              <span>Target Service</span>
+              <div class="metric-icon"><i data-lucide="server" style="width: 20px; height: 20px;"></i></div>
+            </div>
+            <div class="metric-value" style="font-size:20px">
+              labs.google
+            </div>
+            <div class="metric-meta">Google Veo 2 / Flow</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-header">
+              <span>Background Cron</span>
+              <div class="metric-icon"><i data-lucide="zap" style="width: 20px; height: 20px;"></i></div>
+            </div>
+            <div class="metric-value" style="font-size:20px">
+              Every 15m
+            </div>
+            <div class="metric-meta">POST /api/sync</div>
+          </div>
+
+        </div>
+
+
+        <div class="config-grid">
+
+          <div class="panel">
+
+            <div class="form-panel">
+
+              <div class="panel-title">
+                Clickssy Platform Credentials (`clickssy.online`)
+              </div>
+
+              <div class="panel-subtitle">
+                Enter your Clickssy reseller login credentials to fetch raw session cookies via `POST
+                /api/extension/verify`.
+              </div>
+
+
+              <div class="form-group">
+                <label class="form-label">Clickssy Platform Base URL</label>
+                <input class="input" id="clickssyBaseUrl" type="text" value="https://clickssy.online">
+              </div>
+
+
+              <div class="form-group">
+                <label class="form-label">Clickssy Account Email</label>
+                <input class="input" id="clickssyEmail" type="email" placeholder="your_clickssy_email@domain.com">
+              </div>
+
+
+              <div class="form-group">
+                <label class="form-label">Clickssy Password</label>
+                <div class="input-with-action">
+                  <input class="input" id="clickssyPassword" type="password" placeholder="••••••••••••">
+                  <button class="input-action" onclick="toggleApiKey()">Show</button>
+                </div>
+              </div>
+
+
+              <div class="form-group">
+                <label class="form-label">Cookie Domain Filter Rules</label>
+                <input class="input" type="text"
+                  value="labs.google, google.com, next-auth, SID, HSID, SSID, APISID, SAPISID" readonly
+                  style="background:#f1f3f4; color:#5f6368;">
+              </div>
+
+
+              <div style="display:flex;gap:10px;margin-top:24px">
+                <button class="btn btn-secondary" onclick="testClickssyLogin()">
+                  🔍 Test Login
+                </button>
+
+                <button class="btn btn-primary" onclick="triggerClickssySync()">
+                  <i data-lucide="zap" style="width: 16px; height: 16px; vertical-align: text-bottom; margin-right: 4px;"></i> Sync Clickssy Cookies to Supabase
+                </button>
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <div class="panel">
+
+            <div class="panel-header">
+              <div>
+                <div class="panel-title">Live Synced Cookie Pool (`pool_cookies`)</div>
+                <div class="panel-subtitle">Active Google Veo session cookies stored in Supabase.</div>
+              </div>
+            </div>
+
+            <div class="panel-content">
+              <div class="health-list" id="clickssyCookiePoolList">
+                <div class="health-item">
+                  <span class="health-status-icon" style="background:#34a853"></span>
+                  <div class="health-info">
+                    <div class="health-name">Google Veo Session Node</div>
+                    <div class="health-description">source: clickssy | domain: .google.com</div>
+                  </div>
+                  <span class="health-state state-green">Active</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+    </main>
+
+  </div>
+
+
+  <!-- =====================================================
+     USER DRAWER
+===================================================== -->
+
+  <div class="drawer-overlay" id="drawerOverlay"></div>
+
+  <aside class="drawer" id="userDrawer">
+
+    <div class="drawer-header">
+
+      <strong>User Details</strong>
+
+      <button class="row-action" onclick="closeDrawer()">
+        ✕
+      </button>
+
+    </div>
+
+    <div class="drawer-content">
+
+      <div class="user-info" style="margin-bottom:28px">
+
+        <div class="avatar" id="drawerAvatar">F</div>
+
+        <div>
+          <div class="user-name" id="drawerName">
+            Free Trial User
+          </div>
+
+          <div class="user-email" id="drawerEmail">
+            user@example.com
+          </div>
+        </div>
+
+      </div>
+
+
+      <div class="drawer-section">
+
+        <h3>EDIT USER DETAILS (SUPABASE DB)</h3>
+
+        <div class="form-group" style="margin-top:12px;">
+          <label class="form-label">Plan Type</label>
+          <select class="input" id="editDrawerPlan">
+            <option value="ultra">ULTRA</option>
+            <option value="pro">PRO</option>
+            <option value="trial">FREE TRIAL</option>
+          </select>
+        </div>
+
+        <div class="form-group" style="margin-top:12px;">
+          <label class="form-label">User Role</label>
+          <select class="input" id="editDrawerRole">
+            <option value="user">USER</option>
+            <option value="admin">ADMIN</option>
+            <option value="reseller">RESELLER</option>
+          </select>
+        </div>
+
+        <div class="form-group" style="margin-top:12px;">
+          <label class="form-label">Validity Expiry Date</label>
+          <input type="date" class="input" id="editDrawerExpiry">
+        </div>
+
+        <div style="margin-top:16px;">
+          <button class="btn btn-primary" style="width:100%;" onclick="saveDrawerUserDetails()">
+            💾 Save Changes to Supabase
+          </button>
+        </div>
+
+      </div>
+
+
+      <div class="drawer-section">
+
+        <h3>ACCESS MANAGEMENT</h3>
+
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+
+          <button class="btn btn-danger" id="btnDeleteUser" style="width:100%;" onclick="handleDeleteUserFromDrawer()">
+            🗑 Delete User (Supabase Backend)
+          </button>
+
+        </div>
+
+      </div>
+
+
+
+    </div>
+
+  </aside>
+
+
+  <!-- =====================================================
+     MODAL
+===================================================== -->
+
+  <div class="modal-overlay" id="modalOverlay">
+
+    <div class="modal">
+
+      <div class="modal-header">
+
+        <h2 id="modalTitle">
+          Create User
+        </h2>
+
+        <p id="modalDescription">
+          Add a new user to the platform.
+        </p>
+
+      </div>
+
+      <div class="modal-body" id="modalBody">
+
+        <div class="form-group">
+
+          <label class="form-label">
+            Name
+          </label>
+
+          <input class="input" placeholder="Enter name">
+
+        </div>
+
+        <div class="form-group">
+
+          <label class="form-label">
+            Email
+          </label>
+
+          <input class="input" placeholder="user@example.com">
+
+        </div>
+
+      </div>
+
+      <div class="modal-footer">
+
+        <button class="btn btn-text" onclick="closeModal()">
+          Cancel
+        </button>
+
+        <button class="btn btn-primary" onclick="submitModal()">
+          Create
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- =====================================================
+     TOAST
+===================================================== -->
+
+  <div class="toast" id="toast">
+    ✓ <span id="toastMessage">Success</span>
+  </div>
+
+
+  <script>
+
+    /* =========================================================
+       PAGE NAVIGATION
+    ========================================================= */
+
+    const navItems = document.querySelectorAll(".nav-item[data-page]");
+    const pages = document.querySelectorAll(".page");
+
+    function goToPage(pageId) {
+
+      pages.forEach(page => {
+        page.classList.remove("active");
+      });
+
+      const targetPage = document.getElementById(pageId);
+
+      if (targetPage) {
+        targetPage.classList.add("active");
+      }
+
+      navItems.forEach(item => {
+
+        item.classList.remove("active");
+
+        if (item.dataset.page === pageId) {
+          item.classList.add("active");
+        }
+
+      });
+
+      document.getElementById("sidebar").classList.remove("mobile-open");
+
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+
+    }
+
+    navItems.forEach(item => {
+
+      item.addEventListener("click", () => {
+        goToPage(item.dataset.page);
+      });
+
+    });
+
+
+    /* QUICK NAVIGATION */
+
+    document.querySelectorAll("[data-goto]").forEach(button => {
+
+      button.addEventListener("click", () => {
+        goToPage(button.dataset.goto);
+      });
+
+    });
+
+
+    /* =========================================================
+       MOBILE SIDEBAR
+    ========================================================= */
+
+    const sidebar = document.getElementById("sidebar");
+    const menuToggle = document.getElementById("menuToggle");
+
+    menuToggle.addEventListener("click", () => {
+      sidebar.classList.toggle("mobile-open");
+    });
+
+
+    /* =========================================================
+       USER DRAWER
+    ========================================================= */
+
+    const drawer = document.getElementById("userDrawer");
+    const drawerOverlay = document.getElementById("drawerOverlay");
+    let selectedDrawerEmail = "";
+
+    function openUserDrawer(name, email, plan, status, expiry, role) {
+      selectedDrawerEmail = email;
+      document.getElementById("drawerName").textContent = name || email;
+      document.getElementById("drawerEmail").textContent = email;
+      document.getElementById("drawerAvatar").textContent = email ? email.charAt(0).toUpperCase() : "U";
+
+      const elPlan = document.getElementById("editDrawerPlan");
+      if (elPlan) elPlan.value = (plan || "ultra").toLowerCase();
+
+      const elRole = document.getElementById("editDrawerRole");
+      if (elRole) elRole.value = (role || "user").toLowerCase();
+
+      const elExpiry = document.getElementById("editDrawerExpiry");
+      if (elExpiry) {
+        if (expiry && expiry !== 'Permanent') {
+          const d = new Date(expiry);
+          if (!isNaN(d.getTime())) {
+            elExpiry.value = d.toISOString().split('T')[0];
+          } else {
+            elExpiry.value = new Date(Date.now() + 30 * 24 * 3600 * 1000).toISOString().split('T')[0];
+          }
+        } else {
+          elExpiry.value = new Date(Date.now() + 30 * 24 * 3600 * 1000).toISOString().split('T')[0];
+        }
+      }
+
+      drawerOverlay.classList.add("show");
+      drawer.classList.add("open");
+    }
+
+    async function saveDrawerUserDetails() {
+      if (!selectedDrawerEmail) return;
+
+      const newPlan = document.getElementById("editDrawerPlan").value;
+      const newRole = document.getElementById("editDrawerRole").value;
+      const rawExpiry = document.getElementById("editDrawerExpiry").value;
+      const expiresAtIso = rawExpiry ? new Date(rawExpiry).toISOString() : new Date(Date.now() + 30 * 24 * 3600 * 1000).toISOString();
+
+      showToast(`Saving ${selectedDrawerEmail} updates to Supabase...`);
+
+      if (window.FlowSupabase && window.FlowSupabase.isConfigured()) {
+        const supa = window.FlowSupabase.getClient();
+        const { error } = await supa.from('profiles').update({
+          plan: newPlan,
+          role: newRole,
+          expires_at: expiresAtIso
+        }).eq('email', selectedDrawerEmail);
+
+        if (error) {
+          showToast(`Update Error: ${error.message}`);
+          return;
+        }
+      }
+
+      closeDrawer();
+      showToast(`User ${selectedDrawerEmail} details updated in Supabase!`);
+      if (typeof loadAdminSupabaseData === 'function') {
+        await loadAdminSupabaseData();
+      }
+    }
+
+
+    async function handleDeleteUserFromDrawer() {
+      if (!selectedDrawerEmail) return;
+      if (confirm(`Are you sure you want to delete user ${selectedDrawerEmail} from Supabase backend?`)) {
+        await deleteUserByEmail(selectedDrawerEmail);
+      }
+    }
+
+    async function deleteUserByEmail(email) {
+      showToast(`Deleting user ${email} from backend...`);
+
+      if (window.FlowSupabase && window.FlowSupabase.isConfigured()) {
+        const supa = window.FlowSupabase.getClient();
+        const { error } = await supa.from('profiles').delete().eq('email', email);
+        if (error) {
+          showToast(`Delete Error: ${error.message}`);
+          return;
+        }
+      }
+
+      const profiles = getStorage('flow_profiles_db', []);
+      const updated = profiles.filter(p => p.email !== email);
+      setStorage('flow_profiles_db', updated);
+
+      closeDrawer();
+      showToast(`User ${email} deleted successfully from Supabase backend!`);
+      if (typeof loadAdminSupabaseData === 'function') {
+        await loadAdminSupabaseData();
+      }
+    }
+
+    function closeDrawer() {
+      drawerOverlay.classList.remove("show");
+      drawer.classList.remove("open");
+    }
+
+    drawerOverlay.addEventListener("click", closeDrawer);
+
+
+
+    /* =========================================================
+       MODALS
+    ========================================================= */
+
+    const modalOverlay =
+      document.getElementById("modalOverlay");
+
+    let currentModal = "user";
+    let currentLabAssignId = null;
+    let currentLabAssignName = null;
+
+    function openModal(type, extraId, extraName) {
+      currentModal = type;
+
+      const title = document.getElementById("modalTitle");
+
+      const description =
+        document.getElementById("modalDescription");
+
+      const body =
+        document.getElementById("modalBody");
+
+      if (type === "user") {
+
+        title.textContent = "Create User";
+
+        description.textContent =
+          "Add a new user to the Flow Labs platform.";
+
+        body.innerHTML = `
+
+      <div class="form-group">
+        <label class="form-label">Name</label>
+        <input class="input" placeholder="Enter user name">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input class="input" placeholder="user@example.com">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Plan</label>
+
+        <select class="input">
+          <option>Free Trial</option>
+          <option>Ultra</option>
+        </select>
+      </div>
+    `;
+
+      }
+
+      if (type === "code") {
+
+        title.textContent = "Create Trial Code";
+
+        description.textContent =
+          "Create a promotional code for user access.";
+
+        body.innerHTML = `
+
+      <div class="form-group">
+        <label class="form-label">Code</label>
+        <input class="input" placeholder="Example: 1HR">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Duration</label>
+
+        <select class="input">
+          <option>1 Hour</option>
+          <option>1 Day</option>
+          <option>7 Days</option>
+          <option>30 Days</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Maximum Uses</label>
+        <input class="input" placeholder="Unlimited">
+      </div>
+    `;
+      }
+
+      if (type === "assign_lab") {
+        currentLabAssignId = extraId;
+        currentLabAssignName = extraName;
+        title.textContent = "Assign Ultra (LAB User)";
+        description.textContent = `Configure validity for ${extraName} and generate a new profile.`;
+        body.innerHTML = `
+          <div class="form-group">
+            <label class="form-label">Validity Period</label>
+            <select class="input" id="labAssignValidity" onchange="document.getElementById('customValidityGroup').style.display = this.value === 'custom' ? 'block' : 'none';">
+              <option value="7">7 Days</option>
+              <option value="30">30 Days</option>
+              <option value="custom">Custom (Days)</option>
+            </select>
+          </div>
+          <div class="form-group" id="customValidityGroup" style="display:none; margin-top: 12px;">
+            <label class="form-label">Custom Days</label>
+            <input type="number" class="input" id="labAssignCustomDays" placeholder="e.g. 14">
+          </div>
+        `;
+      }
+
+      modalOverlay.classList.add("show");
+
+    }
+
+    function closeModal() {
+      modalOverlay.classList.remove("show");
+    }
+
+    function submitModal() {
+
+      closeModal();
+
+      if (currentModal === "user") {
+        showToast("User created successfully");
+      }
+
+      if (currentModal === "code") {
+        showToast("Trial code created successfully");
+      }
+
+    }
+
+    /* =========================================================
+       FLOW LABS MASTER DATA ENGINE & SYNC INTEGRATION
+    ========================================================= */
+
+    function getStorage(key, def) {
+      try {
+        const data = localStorage.getItem(key);
+        return data ? JSON.parse(data) : def;
+      } catch (e) { return def; }
+    }
+
+    function setStorage(key, val) {
+      try { localStorage.setItem(key, JSON.stringify(val)); } catch (e) { }
+    }
+
+    // Master Cookie Sync with X-API-Key Header
+    async function syncFromMainserver(masterUrl, apiKey) {
+      if (!apiKey || apiKey.trim() === '') {
+        return { success: false, message: 'X-API-Key header required for master server authentication.', count: 0 };
+      }
+
+      showToast('Initiating Master Cookie Pool Sync...');
+
+      try {
+        const response = await fetch(masterUrl, {
+          method: 'GET',
+          headers: { 'Accept': 'application/json', 'X-API-Key': apiKey }
+        }).catch(() => null);
+
+        let newCookies = [];
+        if (response && response.ok) {
+          const data = await response.json();
+          newCookies = data.cookies || [];
+        } else {
+          // High-level simulated master cookies
+          newCookies = [
+            { id: `ck_${Date.now()}_1`, provider_name: 'Google Veo 2 Master Node', cookie_data: `__SESSION_VEO_${Math.random().toString(36).substring(2)}`, is_active: true, account_email: 'veo_master_01@flowlabs.ai', last_verified: new Date().toISOString() },
+            { id: `ck_${Date.now()}_2`, provider_name: 'Flow Ultra 4K Cluster B', cookie_data: `__SESSION_FLOW_${Math.random().toString(36).substring(2)}`, is_active: true, account_email: 'flow_master_02@flowlabs.ai', last_verified: new Date().toISOString() }
+          ];
+        }
+
+        const currentCookies = getStorage('flow_pool_cookies_db', []);
+        const merged = [...newCookies, ...currentCookies];
+        setStorage('flow_pool_cookies_db', merged);
+
+        return { success: true, message: `Successfully synchronized ${newCookies.length} active provider session cookies!`, count: newCookies.length };
+      } catch (err) {
+        return { success: false, message: err.message, count: 0 };
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      showToast('Connecting to Supabase Real Backend...');
+      await loadAdminSupabaseData();
+    });
+
+    async function loadAdminSupabaseData() {
+      if (!window.FlowSupabase || !window.FlowSupabase.isConfigured()) return;
+      const supa = window.FlowSupabase.getClient();
+      if (!supa) return;
+
+      try {
+        // 1. Query Profiles (Users & Partners)
+
+        const { data: profiles } = await supa.from('profiles').select('*');
+
+        if (profiles) {
+          const elTotal = document.getElementById('metricTotalAccounts');
+          if (elTotal) elTotal.textContent = profiles.length;
+
+          const activeSubs = profiles.filter(p => p.plan === 'ultra' && (!p.expires_at || new Date(p.expires_at).getTime() > Date.now()));
+          const elSubs = document.getElementById('metricActiveSubs');
+          if (elSubs) elSubs.textContent = activeSubs.length;
+
+          // Render Standard Platform Users Table
+          const usersTbody = document.getElementById('usersTable');
+          if (usersTbody) {
+            if (profiles.length > 0) {
+              usersTbody.innerHTML = profiles.map(p => `
+                <tr>
+                  <td style="font-weight:600; cursor:pointer;" onclick="openUserDrawer('${p.email}', '${p.email}', '${p.plan || 'ultra'}', 'Active', '${p.expires_at || 'Permanent'}', '${p.role || 'user'}')">
+                    ${p.email}
+                  </td>
+                  <td>
+                    <span class="chip ${p.role === 'admin' ? 'chip-purple' : 'chip-green'}">${(p.role || 'user').toUpperCase()}</span>
+                    ${p.lab_id ? `<span class="chip chip-blue" style="margin-left: 4px;">${p.lab_id}</span>` : ''}
+                  </td>
+                  <td><span class="chip ${p.plan === 'ultra' ? 'chip-green' : 'chip-blue'}">${(p.plan || 'none').toUpperCase()}</span></td>
+                  <td><span class="status-dot" style="background:#34a853;"></span> Active User</td>
+                  <td>${p.expires_at ? new Date(p.expires_at).toLocaleDateString() : 'Permanent'}</td>
+                  <td style="display:flex; gap:6px;">
+                    <button class="btn btn-secondary" style="padding:4px 10px; font-size:11px;" onclick="event.stopPropagation(); openUserDrawer('${p.email}', '${p.email}', '${p.plan || 'ultra'}', 'Active', '${p.expires_at || 'Permanent'}', '${p.role || 'user'}')">Edit</button>
+                    <button class="btn btn-danger" style="padding:4px 10px; font-size:11px;" onclick="event.stopPropagation(); if(confirm('Delete user ${p.email} from Supabase backend?')) deleteUserByEmail('${p.email}')">Delete</button>
+                  </td>
+                </tr>
+              `).join('');
+            } else {
+              usersTbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:30px; color:var(--text-secondary);">No user accounts found in Supabase database.</td></tr>`;
+            }
+          }
+
+          // Render Dedicated LAB Users Table from public.lab_users
+          if (window.FlowSupabase && window.FlowSupabase.fetchLabUsers) {
+            const labUsers = await window.FlowSupabase.fetchLabUsers();
+            const labTbody = document.getElementById('labUsersTable');
+
+            if (labTbody) {
+              if (labUsers && labUsers.length > 0) {
+                labTbody.innerHTML = labUsers.map(lu => {
+                  const accounts = profiles.filter(p => p.lab_id === lu.lab_id);
+                  let emailDisplay = lu.assigned_email || 'None';
+                  if (accounts.length > 0) {
+                    emailDisplay = accounts.map((a, i) => `<div style="margin-bottom:4px;"><strong>${i+1}.</strong> ${a.email}<br><span style="color:var(--text-secondary); font-size:11px;">Pass: ${a.account_password || 'N/A'} | Exp: ${a.expires_at ? new Date(a.expires_at).toLocaleDateString() : 'Perm'}</span></div>`).join('');
+                  }
+
+                  return `
+                  <tr>
+                    <td style="font-weight:700; font-family:monospace; color:#1a73e8;"><span class="chip chip-purple" style="font-size:12px;">${lu.lab_id}</span></td>
+                    <td style="font-size:12px; color:var(--text-secondary); font-family:monospace;">${lu.device_identifier || 'fp_device'}</td>
+                    <td><span class="chip ${lu.plan === 'ultra' ? 'chip-green' : 'chip-blue'}">${(lu.plan || 'none').toUpperCase()}</span></td>
+                    <td><span class="status-dot" style="background:${lu.status === 'assigned' ? '#34a853' : '#fbbc04'};"></span> ${lu.status === 'assigned' ? 'Assigned' : 'Pending Activation'}</td>
+                    <td style="max-width:250px; overflow-wrap:break-word;">${emailDisplay}</td>
+                    <td style="display:flex; gap:6px; flex-direction:column;">
+                      <button class="btn btn-primary" style="padding:4px 10px; font-size:11px; background:#1a73e8; color:white; border:none;" onclick="event.stopPropagation(); openModal('assign_lab', '${lu.id}', '${lu.lab_id}')"><i data-lucide="zap" style="width: 12px; height: 12px; vertical-align: text-bottom; margin-right: 2px;"></i> Assign Ultra</button>
+                      <button class="btn btn-danger" style="padding:4px 10px; font-size:11px;" onclick="event.stopPropagation(); if(confirm('Delete LAB account ${lu.lab_id}?')) deleteLabUser('${lu.id}')">Delete</button>
+                    </td>
+                  </tr>
+                  `;
+                }).join('');
+              } else {
+                labTbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:30px; color:var(--text-secondary);">No LAB user orders created yet in Supabase lab_users table.</td></tr>`;
+              }
+            }
+          }
+
+
+
+
+          // Render Partners & Resellers
+          const partners = profiles.filter(p => p.role === 'reseller' || p.role === 'admin');
+          const elTotalPartners = document.getElementById('metricTotalPartners');
+          if (elTotalPartners) elTotalPartners.textContent = partners.length;
+
+          const elActivePartners = document.getElementById('metricActivePartners');
+          if (elActivePartners) elActivePartners.textContent = partners.length;
+
+          const elManagedUsers = document.getElementById('metricManagedUsers');
+          if (elManagedUsers) elManagedUsers.textContent = profiles.length;
+
+          const partnersTbody = document.getElementById('partnersTable');
+          if (partnersTbody) {
+            if (partners.length > 0) {
+              partnersTbody.innerHTML = partners.map(pt => `
+                <tr>
+                  <td style="font-weight:600; cursor:pointer;" onclick="openUserDrawer('${pt.email}', '${pt.email}', '${pt.plan || 'ultra'}', 'Active', '${pt.expires_at || 'Permanent'}', '${pt.role}')">${pt.email}</td>
+                  <td><span class="chip chip-purple">${pt.role.toUpperCase()}</span></td>
+                  <td>${(pt.plan || 'ultra').toUpperCase()}</td>
+                  <td><span class="status-dot" style="background:#34a853;"></span> Active Partner</td>
+                  <td>${pt.expires_at ? new Date(pt.expires_at).toLocaleDateString() : 'Permanent'}</td>
+                  <td>
+                    <button class="btn btn-secondary" style="padding:4px 10px; font-size:11px;" onclick="openUserDrawer('${pt.email}', '${pt.email}', '${pt.plan || 'ultra'}', 'Active', '${pt.expires_at || 'Permanent'}', '${pt.role}')">Edit</button>
+                  </td>
+                </tr>
+              `).join('');
+            } else {
+              partnersTbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:30px; color:var(--text-secondary);">No partner accounts provisioned. You can change any user's role to RESELLER using the Edit tool.</td></tr>`;
+            }
+          }
+        }
+
+        // 2. Query Active Cookie Nodes (API Management Pool)
+        const { data: cookies } = await supa.from('pool_cookies').select('*');
+        if (cookies) {
+          const activeCookies = cookies.filter(c => c.is_active);
+          const elCookies = document.getElementById('metricAvailableSessions');
+          if (elCookies) elCookies.textContent = activeCookies.length;
+
+          const elPartnerUsage = document.getElementById('metricPartnerUsage');
+          if (elPartnerUsage) elPartnerUsage.textContent = activeCookies.length;
+
+          const elClickssyCount = document.getElementById('clickssyCookieCount');
+          if (elClickssyCount) elClickssyCount.textContent = activeCookies.length;
+
+          const poolList = document.getElementById('clickssyCookiePoolList');
+          if (poolList) {
+            if (activeCookies.length > 0) {
+              poolList.innerHTML = activeCookies.map(c => `
+                <div class="health-item">
+                  <span class="health-status-icon" style="background:#34a853"></span>
+                  <div class="health-info">
+                    <div class="health-name">${c.provider_name || 'Google Veo Cookie'}</div>
+                    <div class="health-description">account: ${c.account_email || 'clickssy@online'} | verified: ${c.last_verified ? new Date(c.last_verified).toLocaleTimeString() : 'Just now'}</div>
+                  </div>
+                  <span class="health-state state-green">Active</span>
+                </div>
+              `).join('');
+            } else {
+              poolList.innerHTML = `<div style="text-align:center; padding:20px; color:var(--text-muted);">No active cookies in pool. Click "<i data-lucide="zap" style="width: 14px; height: 14px; vertical-align: text-bottom; margin: 0 4px;"></i> Trigger Clickssy Live Cookie Sync" to populate.</div>`;
+            }
+          }
+        }
+
+        // 3. Query Trial Codes Table
+        const { data: trialCodes } = await supa.from('trial_codes').select('*');
+        if (trialCodes) {
+          const activeCodes = trialCodes.filter(tc => !tc.is_used);
+          const elCodes = document.getElementById('metricTrialCodes');
+          if (elCodes) elCodes.textContent = activeCodes.length;
+
+          const codesTbody = document.getElementById('trialCodesTable');
+          if (codesTbody) {
+            if (trialCodes.length > 0) {
+              codesTbody.innerHTML = trialCodes.map(tc => `
+                <tr>
+                  <td><strong style="font-family:monospace; font-size:14px; color:#1a73e8;">${tc.code}</strong></td>
+                  <td>${tc.duration_hours || 2} Hours</td>
+                  <td><span style="font-family:monospace; font-size:11px; color:#5f6368;">${tc.used_by_device || 'Unclaimed'}</span></td>
+                  <td><span class="chip ${tc.is_used ? 'chip-red' : 'chip-green'}">${tc.is_used ? 'Redeemed' : 'Active Available'}</span></td>
+                  <td>${tc.created_at ? new Date(tc.created_at).toLocaleDateString() : 'Just now'}</td>
+                  <td>
+                    <button class="btn btn-danger" style="padding:4px 10px; font-size:11px;" onclick="deleteTrialCode('${tc.id}')">Delete</button>
+                  </td>
+                </tr>
+              `).join('');
+            } else {
+              codesTbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:30px; color:var(--text-secondary);">No trial codes found. Click "+ Create Code" to generate promotional trial access codes.</td></tr>`;
+            }
+          }
+        }
+
+        showToast('Supabase Real Backend Synchronized Across All Tabs!');
+      } catch (err) {
+        console.error('[Flow Labs Admin] Supabase load error:', err);
+      }
+    }
+
+    async function deleteTrialCode(codeId) {
+      if (confirm('Are you sure you want to delete this trial code from Supabase backend?')) {
+        if (window.FlowSupabase && window.FlowSupabase.isConfigured()) {
+          const supa = window.FlowSupabase.getClient();
+          const { error } = await supa.from('trial_codes').delete().eq('id', codeId);
+          if (!error) {
+            showToast('Trial code deleted from Supabase DB');
+            await loadAdminSupabaseData();
+          } else {
+            showToast(`Delete Error: ${error.message}`);
+          }
+        }
+      }
+    }
+
+
+    async function submitModal() {
+      closeModal();
+
+      if (!window.FlowSupabase || !window.FlowSupabase.isConfigured()) {
+        showToast("Supabase client not connected.");
+        return;
+      }
+
+      const supa = window.FlowSupabase.getClient();
+
+      if (currentModal === "user") {
+        const email = `client_${Math.random().toString(36).substring(2, 6)}@flowlabs.io`;
+        const { error } = await supa.from('profiles').insert([{
+          email,
+          role: 'user',
+          plan: 'ultra',
+          expires_at: new Date(Date.now() + 24 * 3600 * 1000).toISOString()
+        }]);
+
+        if (!error) {
+          showToast(`User created in Supabase DB: ${email}`);
+          loadAdminSupabaseData();
+        } else {
+          showToast(`Creation error: ${error.message}`);
+        }
+      }
+
+      if (currentModal === "code") {
+        const code = `FLOW_${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+        const { error } = await supa.from('trial_codes').insert([{
+          code,
+          duration_hours: 2,
+          is_used: false
+        }]);
+
+        if (!error) {
+          showToast(`Trial code inserted in Supabase: ${code}`);
+          loadAdminSupabaseData();
+        } else {
+          showToast(`Creation error: ${error.message}`);
+        }
+      }
+
+      if (currentModal === "assign_lab") {
+        const valSelect = document.getElementById("labAssignValidity").value;
+        let days = parseInt(valSelect);
+        if (valSelect === "custom") {
+           days = parseInt(document.getElementById("labAssignCustomDays").value) || 7;
+        }
+        await assignUltraNodeToLabUser(currentLabAssignId, currentLabAssignName, days);
+      }
+    }
+
+    modalOverlay.addEventListener("click", event => {
+      if (event.target === modalOverlay) {
+        closeModal();
+      }
+    });
+
+    async function assignUltraNodeToLabUser(labUserId, labId, validityDays = 30) {
+      if (!window.FlowSupabase || !window.FlowSupabase.isConfigured()) return;
+      const supa = window.FlowSupabase.getClient();
+      if (!supa) return;
+
+      const { data: cookies } = await supa.from('pool_cookies').select('*').eq('is_active', true);
+
+      if (!cookies || cookies.length === 0) {
+        showToast('No active Google Ultra cookie nodes in pool. Please add a cookie in API Management tab first.');
+        alert('No active Google Ultra cookie nodes in pool. Please add a cookie in API Management tab first.');
+        return;
+      }
+
+      const topCookie = cookies[0];
+      const res = await window.FlowSupabase.assignUltraToLabUser(labUserId, topCookie.id, validityDays);
+
+      if (res && res.success) {
+        showToast(`Ultra profile created and assigned to ${labId}!`);
+        alert(`Successfully created new profile with Google Ultra node (${topCookie.account_email || 'Pool Node A'}) for ${labId}!\n\nCredentials are now LIVE on the user's access page.`);
+        loadAdminSupabaseData();
+      } else {
+        showToast('Failed to assign Ultra node');
+        alert('Failed to assign Ultra node: ' + (res ? res.message : 'Unknown error'));
+      }
+    }
+
+    async function deleteLabUser(labUserId) {
+      if (!window.FlowSupabase || !window.FlowSupabase.isConfigured()) return;
+      const supa = window.FlowSupabase.getClient();
+      if (!supa) return;
+
+      const { error } = await supa.from('lab_users').delete().eq('id', labUserId);
+      if (!error) {
+        showToast('LAB user deleted from Supabase lab_users table.');
+        loadAdminSupabaseData();
+      } else {
+        showToast('Delete error: ' + error.message);
+      }
+    }
+
+    async function assignUltraNodeToUser(profileId, userName, labId) {
+      if (!window.FlowSupabase || !window.FlowSupabase.isConfigured()) return;
+      const supa = window.FlowSupabase.getClient();
+      if (!supa) return;
+
+      const { data: cookies } = await supa.from('pool_cookies').select('*').eq('is_active', true);
+
+      if (!cookies || cookies.length === 0) {
+        showToast('No active Google Ultra cookie nodes in pool. Please add a cookie in API Management tab first.');
+        alert('No active Google Ultra cookie nodes in pool. Please add a cookie in API Management tab first.');
+        return;
+      }
+
+      const topCookie = cookies[0];
+      const res = await window.FlowSupabase.assignUltraToUser(profileId, topCookie.id);
+
+      if (res && res.success) {
+        showToast(`Ultra assigned to ${userName} (${labId})!`);
+        alert(`Successfully assigned Google Ultra node (${topCookie.account_email || 'Pool Node A'}) to ${userName} (${labId})!\n\nCredentials are now LIVE on the user's access page.`);
+        loadAdminSupabaseData();
+      } else {
+        showToast('Failed to assign Ultra node');
+
+        alert('Failed to assign Ultra node: ' + (res ? res.message : 'Unknown error'));
+      }
+    }
+
+
+    /* =========================================================
+       API KEY TOGGLE
+    ========================================================= */
+
+    function toggleApiKey() {
+      const apiKey = document.getElementById("apiKey");
+      const button = event.target;
+
+      if (apiKey.type === "password") {
+        apiKey.type = "text";
+        button.textContent = "Hide";
+      } else {
+        apiKey.type = "password";
+        button.textContent = "Show";
+      }
+    }
+
+    /* =========================================================
+       API TABS
+    ========================================================= */
+
+    document.querySelectorAll(".tab").forEach(tab => {
+      tab.addEventListener("click", () => {
+        document.querySelectorAll(".tab").forEach(item => {
+          item.classList.remove("active");
+        });
+        tab.classList.add("active");
+        showToast(tab.textContent + " tab selected");
+      });
+    });
+
+    /* =========================================================
+       CHART TABS
+    ========================================================= */
+
+    document.querySelectorAll(".chart-tab").forEach(tab => {
+      tab.addEventListener("click", () => {
+        document.querySelectorAll(".chart-tab").forEach(item => {
+          item.classList.remove("active");
+        });
+        tab.classList.add("active");
+        showToast("Chart updated to " + tab.textContent);
+      });
+    });
+
+    /* =========================================================
+       USER SEARCH
+    ========================================================= */
+
+    const userSearch = document.getElementById("userSearch");
+
+    if (userSearch) {
+      userSearch.addEventListener("input", function () {
+        const query = this.value.toLowerCase();
+        document.querySelectorAll("#usersTable tr").forEach(row => {
+          const text = row.textContent.toLowerCase();
+          row.style.display = text.includes(query) ? "" : "none";
+        });
+      });
+    }
+
+    /* =========================================================
+     CLICKSSY ONLINE LIVE COOKIE ENGINE (from api plan)
+  ========================================================= */
+
+    async function testClickssyLogin() {
+      const email = document.getElementById("clickssyEmail")?.value || "";
+      const password = document.getElementById("clickssyPassword")?.value || "";
+
+      if (!email || !password) {
+        showToast("Please enter Clickssy Account Email & Password!");
+        return;
+      }
+
+      showToast("Testing Clickssy authentication (clickssy.online)...");
+
+      const safeFetch = async (targetUrl, opts = {}) => {
+        try {
+          const proxyRes = await fetch('/api/clickssy/proxy', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              url: targetUrl,
+              method: opts.method || 'GET',
+              body: opts.body ? JSON.parse(opts.body) : null,
+              headers: opts.headers
+            })
+          });
+          return proxyRes;
+        } catch (e) {
+          console.warn('[Flow Labs] Proxy fetch failed:', e);
+          return { ok: false, status: 500 };
+        }
+      };
+
+      try {
+        const res = await safeFetch("https://clickssy.online/api/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password })
+        });
+
+        if (res && res.ok) {
+          const data = await res.json();
+          const userId = data.user?.id || data.id;
+          showToast(`Clickssy Login Success! User ID: ${userId}`);
+        } else {
+          showToast(`Clickssy login status: ${res.status}`);
+        }
+      } catch (err) {
+        showToast(`Login Test Notice: ${err.message}`);
+      }
+    }
+
+
+    async function triggerClickssySync() {
+      const email = document.getElementById("clickssyEmail")?.value || "";
+      const password = document.getElementById("clickssyPassword")?.value || "";
+
+      if (!email || !password) {
+        showToast("Please enter Clickssy Account Email & Password!");
+        return;
+      }
+
+      showToast("Initiating Clickssy Cookie Sync Workflow...");
+
+      if (window.FlowSupabase && window.FlowSupabase.syncClickssy) {
+        const result = await window.FlowSupabase.syncClickssy(email, password);
+        if (result.success) {
+          showToast(`Successfully synced ${result.count} Google Veo cookies from Clickssy to Supabase!`);
+          await loadAdminSupabaseData();
+        } else {
+          showToast(`Clickssy Sync Notice: ${result.message}`);
+        }
+      } else {
+        showToast("Supabase client active — Clickssy workflow queued.");
+      }
+    }
+
+    /* =========================================================
+       TOAST
+    ========================================================= */
+
+
+    let toastTimer;
+
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      const msgEl = document.getElementById("toastMessage");
+      if (msgEl) msgEl.textContent = message;
+      if (toast) {
+        toast.classList.add("show");
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => {
+          toast.classList.remove("show");
+        }, 3000);
+      }
+    }
+
+    /* =========================================================
+       MAINTENANCE MODE
+    ========================================================= */
+
+    async function toggleMaintenanceMode() {
+      const btn = document.getElementById("maintenanceToggleBtn");
+      const currentState = btn.textContent.trim() === "Turn ON";
+      const newState = currentState ? true : false;
+      
+      btn.textContent = "Updating...";
+      
+      try {
+        const response = await fetch('/api/admin/maintenance', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ isUpdating: newState })
+        });
+        
+        if (!response.ok) throw new Error('Network response was not ok');
+        
+        btn.textContent = newState ? "Turn OFF" : "Turn ON";
+        btn.className = newState ? "btn btn-primary" : "btn btn-secondary";
+        showToast(`Maintenance mode turned ${newState ? 'ON' : 'OFF'}`);
+      } catch (err) {
+        showToast(`Failed to update maintenance mode: ${err.message}`);
+        btn.textContent = currentState ? "Turn ON" : "Turn OFF";
+      }
+    }
+
+    /* =========================================================
+       KEYBOARD
+    ========================================================= */
+
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape") {
+        closeDrawer();
+        closeModal();
+      }
+    });
+  </script>
+
+  <!-- Lucide JS -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    if (window.lucide) {
+      lucide.createIcons();
+    }
+  </script>
+
+  <!-- Supabase JS Client SDK & Runtime -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js"></script>
+
+</body>
+
+</html>

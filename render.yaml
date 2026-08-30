@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: flow-labs-proxy
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: TARGET_URL
+        value: https://labs.google
+      - key: TARGET_DEFAULT_PATH
+        value: /fx/tools/flow
+      - key: GATE_ENABLED
+        value: "true"
+      - key: GATE_PASSWORD
+        sync: false
+      - key: SESSION_COOKIES
+        sync: false
+      - key: API_TOKEN
+        sync: false

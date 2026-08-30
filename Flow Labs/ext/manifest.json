@@ -1,0 +1,169 @@
+{
+  "manifest_version": 3,
+  "name": "Flow Studio",
+  "version": "2.0.0",
+  "description": "AI Video Platform — Unlock Google Flow with your Flow Studio plan.",
+  "permissions": [
+    "cookies",
+    "tabs",
+    "storage",
+    "activeTab",
+    "scripting",
+    "management",
+    "alarms",
+    "browsingData"
+  ],
+  "host_permissions": [
+    "https://labs.google/*",
+    "https://*.labs.google/*",
+    "https://flowsstudio.lovable.app/*",
+    "https://flowbybunny.com/*",
+    "https://*.google.com/*",
+    "https://google.com/*",
+    "https://accounts.google.com/*",
+    "https://www.google.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://labs.google/fx/tools/flow*",
+        "https://labs.google/fx/*/tools/flow*"
+      ],
+      "js": [
+        "bf_early.js"
+      ],
+      "run_at": "document_start"
+    },
+
+    {
+      "matches": [
+        "https://labs.google/fx/tools/flow*"
+      ],
+      "js": [
+        "bf_perf_guard.js"
+      ],
+      "run_at": "document_start"
+    },
+    {
+      "matches": [
+        "https://labs.google/fx/tools/flow*"
+      ],
+      "js": [
+        "flow_overrides.js"
+      ],
+      "run_at": "document_start",
+      "world": "MAIN"
+    },
+    {
+      "matches": [
+        "https://labs.google/fx/tools/flow*",
+        "https://labs.google/fx/*/tools/flow*"
+      ],
+      "js": [
+        "bf_model_hide.js"
+      ],
+      "run_at": "document_start",
+      "world": "MAIN"
+    },
+    {
+      "matches": [
+        "https://labs.google/fx/tools/flow*"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": [
+        "https://labs.google/fx/tools/flow*"
+      ],
+      "js": [
+        "bunny_extra.js"
+      ],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": [
+        "https://labs.google/fx/api/auth/signout*"
+      ],
+      "js": [
+        "auto_signout.js"
+      ],
+      "run_at": "document_start",
+      "world": "MAIN"
+    },
+    {
+      "matches": [
+        "https://labs.google/fx/api/auth/signout*"
+      ],
+      "js": [
+        "auto_signout.js"
+      ],
+      "run_at": "document_end"
+    },
+
+    {
+      "matches": [
+        "https://labs.google/*",
+        "https://*.labs.google/*",
+        "https://*.google.com/*",
+        "https://accounts.google.com/*"
+      ],
+
+      "js": [
+        "bf_watchdog.js",
+        "flow_login_overlay.js"
+      ],
+      "run_at": "document_start"
+    },
+    {
+      "matches": [
+        "https://labs.google/flow/about*",
+        "https://labs.google/flow",
+        "https://labs.google/"
+      ],
+      "js": [
+        "bf_about.js"
+      ],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": [
+        "https://labs.google/fx/api/auth/signout*"
+      ],
+      "js": [
+        "bf_signout_click.js"
+      ],
+      "run_at": "document_end"
+    },
+    {
+      "matches": [
+        "https://labs.google/*",
+        "https://*.labs.google/*",
+        "https://*.google.com/*",
+        "https://accounts.google.com/*"
+      ],
+      "js": [
+        "maintenance_overlay.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icon16.png",
+      "48": "icon48.png",
+      "128": "icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  }
+}

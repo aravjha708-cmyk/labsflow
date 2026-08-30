@@ -1,0 +1,1193 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Account Ready | Flow Studio</title>
+
+  <!-- Inter only -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --blue: #1a73e8;
+      --blue-hover: #185abc;
+      --green: #1e8e3e;
+      --green-bg: #e6f4ea;
+      --red: #d93025;
+      --red-bg: #fce8e6;
+
+      --text: #202124;
+      --muted: #5f6368;
+      --subtle: #80868b;
+
+      --border: #dadce0;
+      --light-border: #e8eaed;
+
+      --page: #f8f9fa;
+      --white: #ffffff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body,
+    button,
+    a {
+      font-family: "Inter", sans-serif;
+    }
+
+    body {
+      margin: 0;
+      background: var(--page);
+      color: var(--text);
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    /* =========================
+       HEADER
+    ========================= */
+
+    .header {
+      height: 64px;
+
+      background: var(--white);
+      border-bottom: 1px solid var(--light-border);
+
+      display: flex;
+      align-items: center;
+
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-inner {
+      width: 100%;
+      max-width: 1180px;
+
+      margin: 0 auto;
+      padding: 0 24px;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--text);
+      font-size: 19px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .logo {
+      width: 31px;
+      height: 31px;
+      position: relative;
+      display: grid;
+      place-items: center;
+    }
+
+    .logo-shape {
+      width: 23px;
+      height: 23px;
+      border-radius: 8px;
+      transform: rotate(45deg);
+      background: conic-gradient(from 35deg,
+          #4285f4 0 27%,
+          #34a853 27% 53%,
+          #fbbc04 53% 76%,
+          #ea4335 76% 100%);
+    }
+
+    .logo-hole {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: white;
+    }
+
+
+    .sign-in {
+      height: 38px;
+
+      padding: 0 15px;
+
+      display: flex;
+      align-items: center;
+      gap: 7px;
+
+      border: 1px solid var(--border);
+      border-radius: 7px;
+
+      background: white;
+      color: #3c4043;
+
+      text-decoration: none;
+
+      font-size: 13px;
+      font-weight: 600;
+
+      transition: .15s ease;
+    }
+
+    .sign-in:hover {
+      background: #f8f9fa;
+      border-color: #c7c9cc;
+    }
+
+    .sign-in svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* =========================
+       PAGE
+    ========================= */
+
+    .page {
+      width: 100%;
+      max-width: 860px;
+
+      margin: 0 auto;
+      padding: 56px 24px 80px;
+    }
+
+    /* =========================
+       HERO
+    ========================= */
+
+    .hero {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .success-icon {
+      width: 58px;
+      height: 58px;
+
+      margin: 0 auto 20px;
+
+      border-radius: 50%;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      background: var(--green-bg);
+      color: var(--green);
+    }
+
+    .success-icon svg {
+      width: 28px;
+      height: 28px;
+    }
+
+    .status-row {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 14px;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+
+      padding: 6px 10px;
+
+      border-radius: 999px;
+
+      background: var(--green-bg);
+      color: var(--green);
+
+      font-size: 11px;
+      font-weight: 700;
+
+      text-transform: uppercase;
+      letter-spacing: .4px;
+    }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+
+      border-radius: 50%;
+      background: var(--green);
+    }
+
+    .hero h1 {
+      margin: 0;
+
+      font-size: 36px;
+      line-height: 1.15;
+
+      font-weight: 750;
+      letter-spacing: -1.2px;
+    }
+
+    .hero p {
+      max-width: 610px;
+
+      margin: 15px auto 0;
+
+      color: var(--muted);
+
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    /* =========================
+       MAIN CARD
+    ========================= */
+
+    .card {
+      background: white;
+
+      border: 1px solid var(--light-border);
+      border-radius: 12px;
+
+      box-shadow:
+        0 1px 2px rgba(60, 64, 67, .04);
+
+      overflow: hidden;
+    }
+
+    .card-section {
+      padding: 28px 30px;
+      border-bottom: 1px solid var(--light-border);
+    }
+
+    .card-section:last-child {
+      border-bottom: none;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+
+      margin-bottom: 22px;
+    }
+
+    .section-icon {
+      width: 38px;
+      height: 38px;
+
+      flex-shrink: 0;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      border-radius: 9px;
+
+      background: #e8f0fe;
+      color: var(--blue);
+    }
+
+    .section-icon svg {
+      width: 19px;
+      height: 19px;
+    }
+
+    .section-header h2 {
+      margin: 0 0 5px;
+
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+
+    .section-header p {
+      margin: 0;
+
+      color: var(--muted);
+
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    /* =========================
+       CREDENTIALS
+    ========================= */
+
+    .credentials {
+      display: grid;
+      gap: 12px;
+    }
+
+    .credential {
+      min-height: 76px;
+      margin-bottom: 10px;
+
+      padding: 15px 16px;
+
+      border: 1px solid var(--border);
+      border-radius: 9px;
+
+      display: flex;
+      align-items: center;
+      gap: 14px;
+
+      transition: border-color .15s ease;
+    }
+
+    .credential:hover {
+      border-color: #b7bbc0;
+    }
+
+    .credential-icon {
+      width: 38px;
+      height: 38px;
+
+      flex-shrink: 0;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      border-radius: 8px;
+
+      background: #f1f3f4;
+      color: #5f6368;
+    }
+
+    .credential-icon svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .credential-info {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .credential-label {
+      display: block;
+
+      margin-bottom: 5px;
+
+      color: var(--subtle);
+
+      font-size: 10px;
+      font-weight: 600;
+
+      text-transform: uppercase;
+      letter-spacing: .5px;
+    }
+
+    .credential-value {
+      display: block;
+
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+
+      color: var(--text);
+
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .copy-btn {
+      width: 36px;
+      height: 36px;
+
+      flex-shrink: 0;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      border: 1px solid var(--border);
+      border-radius: 7px;
+
+      background: white;
+      color: var(--muted);
+
+      transition: .15s ease;
+    }
+
+    .copy-btn:hover {
+      color: var(--blue);
+      border-color: var(--blue);
+      background: #f8fbff;
+    }
+
+    .copy-btn svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* =========================
+       GETTING STARTED
+    ========================= */
+
+    .setup-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .setup-card {
+      padding: 20px;
+
+      border: 1px solid var(--border);
+      border-radius: 9px;
+
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .setup-icon {
+      width: 40px;
+      height: 40px;
+
+      margin-bottom: 15px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      border-radius: 9px;
+
+      background: #f1f3f4;
+      color: #3c4043;
+    }
+
+    .setup-icon svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .setup-card h3 {
+      margin: 0 0 7px;
+
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .setup-card p {
+      margin: 0 0 18px;
+
+      color: var(--muted);
+
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .setup-link {
+      margin-top: auto;
+
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+
+      color: var(--blue);
+
+      text-decoration: none;
+
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .setup-link svg {
+      width: 15px;
+      height: 15px;
+    }
+
+    .setup-link:hover {
+      text-decoration: underline;
+    }
+
+    /* =========================
+       FINAL CTA
+    ========================= */
+
+    .ready-section {
+      padding: 30px;
+
+      text-align: center;
+
+      background: #fafcff;
+    }
+
+    .ready-icon {
+      width: 42px;
+      height: 42px;
+
+      margin: 0 auto 14px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      border-radius: 50%;
+
+      background: #e8f0fe;
+      color: var(--blue);
+    }
+
+    .ready-icon svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .ready-section h2 {
+      margin: 0;
+
+      font-size: 17px;
+      font-weight: 700;
+    }
+
+    .ready-section p {
+      max-width: 470px;
+
+      margin: 9px auto 20px;
+
+      color: var(--muted);
+
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .dashboard-btn {
+      height: 46px;
+
+      padding: 0 20px;
+
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+
+      border-radius: 7px;
+
+      background: var(--blue);
+      color: white;
+
+      text-decoration: none;
+
+      font-size: 13px;
+      font-weight: 600;
+
+      transition: background .15s ease;
+    }
+
+    .dashboard-btn:hover {
+      background: var(--blue-hover);
+    }
+
+    .dashboard-btn svg {
+      width: 17px;
+      height: 17px;
+    }
+
+    /* =========================
+       RESPONSIVE
+    ========================= */
+
+    @media (max-width: 650px) {
+
+      .header-inner {
+        padding: 0 16px;
+      }
+
+      .page {
+        padding: 36px 16px 60px;
+      }
+
+      .hero {
+        margin-bottom: 28px;
+      }
+
+      .hero h1 {
+        font-size: 28px;
+        letter-spacing: -0.8px;
+      }
+
+      .hero p {
+        font-size: 13px;
+      }
+
+      .card-section {
+        padding: 22px 18px;
+      }
+
+      .setup-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .credential {
+        padding: 13px;
+      }
+
+      .ready-section {
+        padding: 26px 18px;
+      }
+    }
+
+    @media (max-width: 420px) {
+
+      .brand span {
+        display: none;
+      }
+
+      .sign-in span {
+        display: none;
+      }
+
+      .sign-in {
+        width: 38px;
+        padding: 0;
+        justify-content: center;
+      }
+
+      .hero h1 {
+        font-size: 26px;
+      }
+
+      .credential-value {
+        font-size: 12px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-inner">
+      <a href="/" class="brand">
+        <span class="logo">
+          <span class="logo-shape"></span>
+          <span class="logo-hole"></span>
+        </span>
+        <span>Flow Labs</span>
+      </a>
+    </div>
+  </header>
+
+
+
+
+  <main class="page">
+
+    <!-- STATE 1: ACTIVE USER ACCOUNT CREATED -->
+    <div id="accountActiveView" style="display: none;">
+
+      <!-- SUCCESS HERO -->
+      <section class="hero">
+
+        <div class="success-icon">
+          <i data-lucide="check"></i>
+        </div>
+
+        <div class="status-row">
+          <div class="status-badge">
+            <span class="status-dot"></span>
+            Claim Successful
+          </div>
+        </div>
+
+        <h1>Your Account Is Ready</h1>
+
+        <p id="heroTimerText">
+          Your free account has been generated successfully.
+          Access is available for 2 hours from the time of claim.
+        </p>
+
+      </section>
+
+
+      <!-- MAIN CARD -->
+      <section class="card">
+
+        <!-- CREDENTIALS -->
+        <div class="card-section">
+
+          <div class="section-header">
+
+            <div class="section-icon">
+              <i data-lucide="key-round"></i>
+            </div>
+
+            <div>
+              <h2>Account Credentials</h2>
+
+              <p>
+                Use these credentials to sign in to your account.
+              </p>
+            </div>
+
+          </div>
+
+
+          <div class="credentials">
+
+            <!-- EMAIL -->
+            <div class="credential">
+
+              <div class="credential-icon">
+                <i data-lucide="mail"></i>
+              </div>
+
+              <div class="credential-info">
+
+                <span class="credential-label">
+                  Email address
+                </span>
+
+                <span class="credential-value" id="emailValue">
+                  --
+                </span>
+
+              </div>
+
+              <button class="copy-btn" onclick="copyValue('emailValue', this)" aria-label="Copy email">
+                <i data-lucide="copy"></i>
+              </button>
+
+            </div>
+
+
+            <!-- PASSWORD -->
+            <div class="credential">
+
+              <div class="credential-icon">
+                <i data-lucide="lock-keyhole"></i>
+              </div>
+
+              <div class="credential-info">
+
+                <span class="credential-label">
+                  Auto-generated password
+                </span>
+
+                <span class="credential-value" id="passwordValue" data-real-value="--">
+                  ••••••••••••
+                </span>
+
+              </div>
+
+              <button class="copy-btn" onclick="copyValue('passwordValue', this)" aria-label="Copy password">
+                <i data-lucide="copy"></i>
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- GETTING STARTED -->
+        <div class="card-section">
+
+          <div class="section-header">
+
+            <div class="section-icon">
+              <i data-lucide="rocket"></i>
+            </div>
+
+            <div>
+              <h2>Getting Started</h2>
+
+              <p>
+                Complete these steps before creating your first video.
+              </p>
+            </div>
+
+          </div>
+
+
+          <div class="setup-grid">
+
+            <!-- EXTENSION -->
+            <div class="setup-card">
+
+              <div class="setup-icon">
+                <i data-lucide="puzzle"></i>
+              </div>
+
+              <h3>Chrome Extension</h3>
+
+              <p>
+                Install the extension required for video generation.
+              </p>
+
+              <a href="#" class="setup-link">
+
+                Download Extension
+
+                <i data-lucide="download"></i>
+
+              </a>
+
+            </div>
+
+
+            <!-- TUTORIAL -->
+            <div class="setup-card">
+
+              <div class="setup-icon">
+                <i data-lucide="circle-play"></i>
+              </div>
+
+              <h3>Setup Tutorial</h3>
+
+              <p>
+                Watch a quick guide explaining how to get started.
+              </p>
+
+              <a href="#" class="setup-link">
+
+                Watch Tutorial
+
+                <i data-lucide="arrow-up-right"></i>
+
+              </a>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+    </div>
+
+
+    <!-- STATE 2: NO ACCOUNT FOUND / PENDING ACTIVATION STATE -->
+    <div id="noAccountView" style="display: none;">
+
+      <section class="hero" style="margin-bottom: 24px;">
+
+        <div class="success-icon" style="background: #feefc3; color: #b06000;">
+          <i data-lucide="clock"></i>
+        </div>
+
+        <div class="status-row">
+          <div class="status-badge" style="background: #feefc3; color: #b06000; border-color: #fde293;">
+            ✦ Pending Admin Activation
+          </div>
+        </div>
+
+        <h1>No Google Ultra Account Assigned Yet</h1>
+
+        <p style="max-width: 540px; margin: 14px auto 28px; font-size: 15px; color: #5f6368; line-height: 1.6;">
+          Your account has been created successfully. Your Google Ultra node credentials have not been assigned by the
+          admin yet. Please contact admin to get your account activated.
+        </p>
+
+        <div style="display: flex; align-items: center; justify-content: center; gap: 14px; flex-wrap: wrap;">
+          <a href="https://whatsapp.com/channel/example" target="_blank" rel="noopener" class="dashboard-btn"
+            style="background: #25d366; text-decoration: none; min-width: 220px; font-weight: 700;">
+            <i data-lucide="message-circle" style="width: 16px; height: 16px; margin-right: 6px;"></i> Contact Admin on
+            WhatsApp
+          </a>
+
+          <a href="/#pricing" class="sign-in"
+            style="height: 46px; padding: 0 24px; text-decoration: none; font-size: 14px; border-radius: 8px;">
+            Choose a Paid Plan
+          </a>
+        </div>
+
+      </section>
+
+    </div>
+
+
+  </main>
+
+
+  <!-- Supabase JS Client & Runtime -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js"></script>
+  <!-- Lucide -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+
+  <script>
+    function getCurrentUser() {
+      try {
+        const data = localStorage.getItem('flow_current_user');
+        return data ? JSON.parse(data) : null;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function getExtensionSettings() {
+      try {
+        const data = localStorage.getItem('flow_extension_settings_db');
+        return data ? JSON.parse(data) : {
+          download_url: 'https://flowlabs.ai/extension/download',
+          latest_version: '1.4.0'
+        };
+      } catch (e) {
+        return { download_url: '#', latest_version: '1.4.0' };
+      }
+    }
+
+    async function refreshAccessPageData(manual = false) {
+      let user = getCurrentUser();
+      const storedLabId = localStorage.getItem('flow_lab_id');
+      const ext = getExtensionSettings();
+
+      const activeView = document.getElementById('accountActiveView');
+      const noAccView = document.getElementById('noAccountView');
+
+      if (!user && !storedLabId) {
+        if (activeView) activeView.style.display = 'none';
+        if (noAccView) noAccView.style.display = 'block';
+        return;
+      }
+
+      let labRecord = null;
+      let profiles = [];
+
+      // Query live Supabase database for public.lab_users & public.profiles
+      if (window.FlowSupabase && window.FlowSupabase.isConfigured()) {
+        const supa = window.FlowSupabase.getClient();
+        if (supa) {
+          const labId = (user && user.lab_id) || storedLabId;
+          if (labId) {
+            const { data: luData } = await supa
+              .from('lab_users')
+              .select('*')
+              .eq('lab_id', labId)
+              .maybeSingle();
+            if (luData) labRecord = luData;
+
+            // Fetch ALL profiles for this lab_id
+            const { data: profData } = await supa
+              .from('profiles')
+              .select(`*, pool_cookies(*)`)
+              .or(`lab_id.eq.${labId},email.eq.${user ? user.email : ''}`);
+
+            if (profData && profData.length > 0) {
+              profiles = profData;
+              // Keep local user in sync with the first profile
+              localStorage.setItem('flow_current_user', JSON.stringify(profData[0]));
+            }
+          }
+        }
+      }
+
+      const isLabAssigned = labRecord && (labRecord.status === 'assigned' || labRecord.assigned_email);
+      const hasProfiles = profiles.length > 0;
+      const hasUserCookieData = user && (user.assigned_cookie_data || user.assigned_email);
+
+      const hasActiveCredentials = isLabAssigned || hasProfiles || hasUserCookieData;
+
+      if (hasActiveCredentials) {
+        if (activeView) activeView.style.display = 'block';
+        if (noAccView) noAccView.style.display = 'none';
+
+        // Display multiple credentials if available
+        const credentialsContainer = document.querySelector('.credentials');
+        if (credentialsContainer) {
+          if (profiles.length > 0) {
+            let html = '';
+            profiles.forEach((prof, idx) => {
+              const activeEmail = prof.email;
+              const activePass = prof.account_password || (prof.pool_cookies && prof.pool_cookies.cookie_data) || prof.assigned_cookie_data || 'Contact admin to activate session key';
+
+              // Calculate validity for this specific profile
+              let expiryText = "Permanent";
+              if (prof.expires_at) {
+                const diff = new Date(prof.expires_at).getTime() - Date.now();
+                if (diff <= 0) {
+                  expiryText = "<span style='color:#ea4335;'>Expired</span>";
+                } else {
+                  const d = Math.floor(diff / (1000 * 3600 * 24));
+                  const h = Math.floor((diff % (1000 * 3600 * 24)) / (1000 * 3600));
+                  expiryText = `Valid for ${d}d ${h}h`;
+                }
+              }
+
+              html += `
+                <div style="background:#f8faff; border:1px solid #e1e9ff; border-radius:12px; padding:18px; margin-bottom:16px; position:relative; overflow:hidden;">
+                  <!-- Decorative Top Bar -->
+                  <div style="position:absolute; top:0; left:0; right:0; height:4px; background:linear-gradient(90deg, #1a73e8, #4285f4);"></div>
+                  
+                  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                    <h4 style="margin:0; font-size:14px; color:#1a73e8; display:flex; align-items:center; gap:6px;">
+                      <i data-lucide="user" style="width:16px; height:16px;"></i> 
+                      Profile ${idx + 1}
+                    </h4>
+                    <span style="font-size:11px; font-weight:600; color:#5f6368; background:#e8f0fe; padding:4px 8px; border-radius:12px;">
+                      ${expiryText}
+                    </span>
+                  </div>
+
+                  <!-- EMAIL -->
+                  <div class="credential" style="background:#fff;">
+                    <div class="credential-icon"><i data-lucide="mail"></i></div>
+                    <div class="credential-info">
+                      <span class="credential-label">Email address</span>
+                      <span class="credential-value" id="emailValue${idx}">${activeEmail}</span>
+                    </div>
+                    <button class="copy-btn" onclick="copyValue('emailValue${idx}', this)"><i data-lucide="copy"></i></button>
+                  </div>
+                  <!-- PASSWORD -->
+                  <div class="credential" style="background:#fff;">
+                    <div class="credential-icon"><i data-lucide="lock-keyhole"></i></div>
+                    <div class="credential-info">
+                      <span class="credential-label">Session Key (Password)</span>
+                      <span class="credential-value" id="passwordValue${idx}" data-real-value="${activePass}">••••••••••••</span>
+                    </div>
+                    <button class="copy-btn" onclick="copyValue('passwordValue${idx}', this)"><i data-lucide="copy"></i></button>
+                  </div>
+                </div>
+              `;
+            });
+            credentialsContainer.innerHTML = html;
+          } else if (hasUserCookieData || isLabAssigned) {
+            // Fallback for immediate claim or legacy single record
+            const activeEmail = (labRecord && labRecord.assigned_email) || (user && user.assigned_email);
+            const activePass = (labRecord && labRecord.assigned_cookie_data) || (user && user.assigned_cookie_data);
+            credentialsContainer.innerHTML = `
+              <!-- EMAIL -->
+              <div class="credential">
+                <div class="credential-icon"><i data-lucide="mail"></i></div>
+                <div class="credential-info">
+                  <span class="credential-label">Email address</span>
+                  <span class="credential-value" id="emailValue">${activeEmail}</span>
+                </div>
+                <button class="copy-btn" onclick="copyValue('emailValue', this)"><i data-lucide="copy"></i></button>
+              </div>
+              <!-- PASSWORD -->
+              <div class="credential">
+                <div class="credential-icon"><i data-lucide="lock-keyhole"></i></div>
+                <div class="credential-info">
+                  <span class="credential-label">Session Key (Password)</span>
+                  <span class="credential-value" id="passwordValue" data-real-value="${activePass}">••••••••••••</span>
+                </div>
+                <button class="copy-btn" onclick="copyValue('passwordValue', this)"><i data-lucide="copy"></i></button>
+              </div>
+            `;
+          }
+        }
+
+        const heroPara = document.getElementById('heroTimerText');
+        // Get the most recent expiry from profiles or fallback to labRecord
+        const latestProfileExpiry = profiles.reduce((latest, p) => (p.expires_at && new Date(p.expires_at) > latest ? new Date(p.expires_at) : latest), new Date(0));
+        let expiryTarget = latestProfileExpiry.getTime() > 0 ? latestProfileExpiry.toISOString() : null;
+        if (!expiryTarget) expiryTarget = (labRecord && labRecord.expires_at) || (user && user.expires_at);
+
+        if (heroPara && expiryTarget) {
+          const updateTimer = () => {
+            const diff = new Date(expiryTarget).getTime() - Date.now();
+            if (diff <= 0) {
+              heroPara.textContent = 'Free trial expired. Contact admin on WhatsApp to activate your paid plan.';
+            } else {
+              const d = Math.floor(diff / (1000 * 3600 * 24));
+              const h = Math.floor((diff % (1000 * 3600 * 24)) / (1000 * 3600));
+              const m = Math.floor((diff % (1000 * 3600)) / (1000 * 60));
+              const s = Math.floor((diff % (1000 * 60)) / 1000);
+
+              let timeStr = `${h}h ${m}m ${s}s`;
+              if (d > 0) timeStr = `${d}d ${timeStr}`;
+
+              const pendingPaid = localStorage.getItem('flow_pending_paid_plan');
+              const paidNote = pendingPaid ? ` [Order for ${pendingPaid} plan registered]` : '';
+              heroPara.textContent = `Your Ultra access is active! Valid for ${timeStr} (Lab ID: ${storedLabId || 'LAB'})${paidNote}.`;
+            }
+          };
+          updateTimer();
+          setInterval(updateTimer, 1000);
+        }
+      }
+      else {
+        // Pending admin activation state
+        if (activeView) activeView.style.display = 'none';
+        if (noAccView) noAccView.style.display = 'block';
+
+        const labId = (liveProfile && liveProfile.lab_id) || storedLabId || 'LAB';
+        const plan = (liveProfile && liveProfile.plan ? liveProfile.plan.toUpperCase() : 'PAID');
+
+        const noAccContext = document.querySelector('#noAccountView p');
+        if (noAccContext) {
+          noAccContext.innerHTML = `Your order for <strong>${plan}</strong> plan (Lab ID: <strong>${labId}</strong>) has been registered. Your credentials have not been assigned by admin yet. Please contact admin on WhatsApp or click Refresh Status below.`;
+        }
+
+        const waLink = document.querySelector('#noAccountView a[href*="whatsapp"], #noAccountView a[href*="wa.me"]');
+        if (waLink) {
+          const waMsg = `Hi Admin, I want to activate my ${plan} plan.\nLab ID: ${labId}`;
+          waLink.href = `https://wa.me/917875659526?text=${encodeURIComponent(waMsg)}`;
+        }
+
+
+        if (manual) {
+          alert(`Re-checking status for ${labId}... Credentials not assigned yet by admin. Please contact admin on WhatsApp.`);
+        }
+      }
+
+      const setupLinks = document.querySelectorAll('.setup-link');
+      if (setupLinks[0] && ext && ext.download_url) {
+        setupLinks[0].href = ext.download_url;
+        setupLinks[0].target = '_blank';
+      }
+
+      if (window.lucide) lucide.createIcons();
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      refreshAccessPageData();
+    });
+
+
+
+    function copyValue(elementId, button) {
+      const el = document.getElementById(elementId);
+      const value = el.hasAttribute('data-real-value') ? el.getAttribute('data-real-value') : el.textContent.trim();
+      navigator.clipboard.writeText(value);
+      const original = button.innerHTML;
+      button.innerHTML = '<i data-lucide="check"></i>';
+      lucide.createIcons();
+
+      setTimeout(() => {
+        button.innerHTML = original;
+        lucide.createIcons();
+      }, 1500);
+
+      // Clear the clipboard after 15 seconds for security
+      setTimeout(() => {
+        navigator.clipboard.writeText('');
+      }, 15000);
+    }
+  </script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.lucide) lucide.createIcons();
+    });
+  </script>
+</body>
+
+</html>

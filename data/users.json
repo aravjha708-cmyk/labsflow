@@ -1,0 +1,24 @@
+[
+  {
+    "id": "usr_admin_01",
+    "name": "System Admin",
+    "email": "admin@flowlabs.ai",
+    "password": "admin",
+    "role": "admin",
+    "plan": "ultra",
+    "createdAt": "2026-08-29T18:58:28.100Z",
+    "expiresAt": "2027-08-29T18:58:28.101Z",
+    "isActive": true
+  },
+  {
+    "id": "usr_pro_01",
+    "name": "Pro Member",
+    "email": "pro@flowlabs.ai",
+    "password": "flow",
+    "role": "user",
+    "plan": "pro",
+    "createdAt": "2026-08-29T18:58:28.101Z",
+    "expiresAt": "2026-09-28T18:58:28.101Z",
+    "isActive": true
+  }
+]

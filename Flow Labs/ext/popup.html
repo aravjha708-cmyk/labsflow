@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Flow Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;600&family=Roboto:wght@400;500&display=swap"
+    rel="stylesheet">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #202124;
+      --surface: #292a2d;
+      --surface-hover: #303134;
+      --border: #3c4043;
+      --border-soft: rgba(232, 234, 237, .08);
+
+      --text: #e8eaed;
+      --text-secondary: #bdc1c6;
+      --muted: #9aa0a6;
+
+      --blue: #a8c7fa;
+      --blue-text: #062e6f;
+      --blue-soft: rgba(168, 199, 250, .10);
+
+      --green: #81c995;
+      --green-soft: rgba(129, 201, 149, .12);
+
+      --red: #f28b82;
+      --red-soft: rgba(242, 139, 130, .10);
+
+      --google: "Google Sans", Roboto, Arial, sans-serif;
+      --roboto: Roboto, Arial, sans-serif;
+    }
+
+    html,
+    body {
+      width: 320px;
+      min-height: 400px;
+      overflow-x: hidden;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--google);
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .app {
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* HEADER */
+    .header {
+      height: 54px;
+      padding: 0 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+    }
+
+    .logo {
+      width: 24px;
+      height: 24px;
+      display: block;
+      object-fit: contain;
+    }
+
+    .brand-title {
+      font-size: 14.5px;
+      font-weight: 500;
+      line-height: 19px;
+      letter-spacing: -.1px;
+    }
+
+    .brand-subtitle {
+      margin-top: 1px;
+      color: var(--muted);
+      font-family: var(--roboto);
+      font-size: 10.5px;
+      line-height: 14px;
+    }
+
+    .version {
+      padding: 4px 9px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      color: var(--blue);
+      background: rgba(168, 199, 250, .04);
+      font-family: var(--roboto);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: .4px;
+    }
+
+    /* CONTENT */
+    .content {
+      flex: 1;
+      padding: 14px;
+    }
+
+    /* SPINNER */
+    #loading-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 260px;
+      gap: 12px;
+    }
+
+    .spinner {
+      width: 26px;
+      height: 26px;
+      border: 2.5px solid var(--border);
+      border-top-color: var(--blue);
+      border-radius: 50%;
+      animation: spin 0.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .loading-text {
+      color: var(--muted);
+      font-family: var(--roboto);
+      font-size: 12px;
+    }
+
+    /* ACCOUNT */
+    .account {
+      padding: 15px 14px;
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      background:
+        radial-gradient(circle at 100% 0%, rgba(168, 199, 250, .07), transparent 38%),
+        var(--surface);
+      animation: enter .35s ease both;
+    }
+
+    .account-top {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+    }
+
+    .avatar {
+      width: 38px;
+      height: 38px;
+      flex: none;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: #394457;
+      border: 1px solid rgba(168, 199, 250, .15);
+      color: #b6ccff;
+      font-size: 15px;
+      font-weight: 500;
+    }
+
+    .account-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .user-name {
+      margin-bottom: 2px;
+      font-size: 14.5px;
+      font-weight: 500;
+      line-height: 19px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .plan-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--roboto);
+    }
+
+    .plan-name {
+      color: var(--blue);
+      font-size: 11.5px;
+      font-weight: 500;
+    }
+
+    .plan-dot {
+      width: 3.5px;
+      height: 3.5px;
+      border-radius: 50%;
+      background: var(--muted);
+    }
+
+    .plan-days {
+      color: var(--text-secondary);
+      font-size: 11.5px;
+    }
+
+    .subscription {
+      margin-top: 14px;
+    }
+
+    .subscription-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+      font-family: var(--roboto);
+      font-size: 10.5px;
+    }
+
+    .subscription-label {
+      color: var(--muted);
+    }
+
+    .subscription-status {
+      color: var(--green);
+    }
+
+    .track {
+      width: 100%;
+      height: 4px;
+      overflow: hidden;
+      border-radius: 10px;
+      background: #3c4043;
+    }
+
+    .progress {
+      width: 0%;
+      height: 100%;
+      border-radius: inherit;
+      background: var(--blue);
+      transition: width 0.5s cubic-bezier(.2, .8, .2, 1);
+    }
+
+    /* STATS */
+    .stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 11px;
+      margin-top: 11px;
+    }
+
+    .stat {
+      min-height: 76px;
+      padding: 13px 11px;
+      border: 1px solid var(--border-soft);
+      border-radius: 11px;
+      background: var(--surface);
+      animation: enter .35s ease both;
+      transition: background .18s ease, transform .18s ease;
+    }
+
+    .stat:nth-child(2) {
+      animation-delay: .04s;
+    }
+
+    .stat:hover {
+      background: var(--surface-hover);
+      transform: translateY(-1px);
+    }
+
+    .stat-label {
+      margin-bottom: 6px;
+      color: var(--muted);
+      font-family: var(--roboto);
+      font-size: 10.5px;
+      line-height: 13px;
+    }
+
+    .stat-value {
+      display: flex;
+      align-items: baseline;
+      gap: 5px;
+    }
+
+    .stat-number {
+      font-size: 23px;
+      font-weight: 400;
+      line-height: 25px;
+      letter-spacing: -.3px;
+    }
+
+    .stat:first-child .stat-number {
+      color: var(--green);
+    }
+
+    .stat:last-child .stat-number {
+      color: var(--blue);
+    }
+
+    .stat-unit {
+      color: var(--text-secondary);
+      font-family: var(--roboto);
+      font-size: 10.5px;
+    }
+
+    /* SECTION */
+    .section {
+      margin-top: 15px;
+      animation: enter .35s .08s ease both;
+    }
+
+    .section-title {
+      padding: 0 2px;
+      margin-bottom: 7px;
+      color: var(--muted);
+      font-family: var(--roboto);
+      font-size: 10.5px;
+      font-weight: 500;
+      letter-spacing: .45px;
+      text-transform: uppercase;
+    }
+
+    /* FLOW CARD */
+    .flow-card {
+      overflow: hidden;
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      background: var(--surface);
+    }
+
+    .flow-info-row {
+      padding: 13px 11px;
+      display: flex;
+      align-items: center;
+      gap: 11px;
+    }
+
+    .flow-icon {
+      width: 34px;
+      height: 34px;
+      flex: none;
+      display: grid;
+      place-items: center;
+      border-radius: 10px;
+      background: #35363a;
+      color: var(--blue);
+    }
+
+    .flow-icon svg {
+      width: 16px;
+      height: 16px;
+      stroke-width: 1.8;
+    }
+
+    .flow-copy {
+      flex: 1;
+    }
+
+    .flow-name {
+      margin-bottom: 2px;
+      font-size: 13.5px;
+      font-weight: 500;
+      line-height: 17px;
+    }
+
+    .flow-status {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--muted);
+      font-family: var(--roboto);
+      font-size: 10.5px;
+    }
+
+    .status-dot {
+      width: 6.5px;
+      height: 6.5px;
+      border-radius: 50%;
+      background: #9aa0a6;
+      display: inline-block;
+    }
+
+    .flow-badge.active .status-dot {
+      background: var(--green);
+      box-shadow: 0 0 5px var(--green);
+    }
+
+    .divider {
+      height: 1px;
+      background: var(--border-soft);
+    }
+
+    /* ACTIONS */
+    .actions {
+      padding: 11px;
+      display: flex;
+      gap: 9px;
+    }
+
+    .btn {
+      height: 38px;
+      border: 0;
+      border-radius: 19px;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 7px;
+      cursor: pointer;
+      font-size: 12.5px;
+      font-weight: 500;
+      transition: transform .12s ease, background .18s ease, box-shadow .18s ease;
+      text-decoration: none;
+    }
+
+    .btn:active {
+      transform: scale(.975);
+    }
+
+    .btn svg {
+      width: 15px !important;
+      height: 15px !important;
+      flex-shrink: 0 !important;
+      display: block !important;
+    }
+
+    .open-btn {
+      flex: 1;
+      background: var(--blue);
+      color: var(--blue-text);
+    }
+
+    .open-btn:hover {
+      background: #b8d3ff;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, .2);
+    }
+
+    .open-btn svg {
+      stroke-width: 2;
+    }
+
+    .disconnect {
+      width: 38px;
+      flex: none;
+      background: transparent;
+      color: var(--red);
+      border: 1px solid rgba(242, 139, 130, .38);
+    }
+
+    .disconnect:hover {
+      background: var(--red-soft);
+    }
+
+    .disconnect svg {
+      stroke-width: 1.8;
+    }
+
+    /* LOGIN SCREEN FORM */
+    #login-screen .brand-display {
+      text-align: center;
+      padding: 6px 0 14px;
+      margin: 40px 0 0 0;
+    }
+
+    #login-screen .brand-display img.g-logo {
+      width: 40px;
+      height: 40px;
+      display: block;
+      margin: 0 auto 11px;
+      object-fit: contain;
+    }
+
+    #login-screen .brand-display h3 {
+      font-size: 18px;
+      font-weight: 400;
+      margin-bottom: 5px;
+    }
+
+    #login-screen .brand-display p {
+      font-size: 12.5px;
+      color: var(--muted);
+      line-height: 1.45;
+      font-family: var(--roboto);
+    }
+
+    .form-group {
+      margin-bottom: 11px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 10.5px;
+      color: var(--muted);
+      margin-bottom: 4px;
+      font-family: var(--roboto);
+      font-weight: 500;
+      letter-spacing: .3px;
+      text-transform: uppercase;
+    }
+
+    .form-group input {
+      width: 100%;
+      height: 40px;
+      padding: 9px 11px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      font-size: 13px;
+      outline: none;
+      font-family: inherit;
+      transition: border-color .15s ease;
+    }
+
+    .form-group input:focus {
+      border-color: var(--blue);
+    }
+
+    .form-group input::placeholder {
+      color: #5f6368;
+    }
+
+    .error {
+      background: var(--red-soft);
+      border: 1px solid rgba(242, 139, 130, .3);
+      border-radius: 9px;
+      padding: 9px 11px;
+      font-size: 11.5px;
+      color: var(--red);
+      margin-bottom: 11px;
+      font-family: var(--roboto);
+      line-height: 1.4;
+    }
+
+    .portal-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      width: 100%;
+      height: 38px;
+      border-radius: 19px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--blue);
+      text-decoration: none;
+      font-size: 12.5px;
+      font-weight: 500;
+      margin-top: 9px;
+      transition: background .18s ease;
+    }
+
+    .portal-link:hover {
+      background: var(--surface-hover);
+    }
+
+    .portal-link svg {
+      width: 15px;
+      height: 15px;
+    }
+
+    /* BANNERS */
+    .disabled-banner,
+    .renew-banner {
+      border-radius: 11px;
+      padding: 11px 13px;
+      margin-bottom: 11px;
+      font-size: 11.5px;
+      font-family: var(--roboto);
+      line-height: 1.45;
+    }
+
+    .disabled-banner {
+      background: var(--red-soft);
+      border: 1px solid rgba(242, 139, 130, .3);
+      color: var(--red);
+      display: flex;
+      align-items: center;
+      gap: 9px;
+    }
+
+    .renew-banner {
+      background: rgba(251, 188, 4, .1);
+      border: 1px solid rgba(251, 188, 4, .3);
+      color: var(--text);
+    }
+
+    .renew-banner-title {
+      font-weight: 500;
+      color: #fbbc04;
+      margin-bottom: 3px;
+    }
+
+    .renew-banner-msg {
+      color: var(--text-secondary);
+      margin-bottom: 9px;
+    }
+
+    .renew-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 13px;
+      border-radius: 17px;
+      background: var(--blue);
+      color: var(--blue-text);
+      text-decoration: none;
+      font-size: 11.5px;
+      font-weight: 500;
+    }
+
+    /* ANIMATIONS */
+    @keyframes enter {
+      from {
+        opacity: 0;
+        transform: translateY(7px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="app">
+
+    <!-- HEADER -->
+    <header class="header">
+      <div class="brand">
+        <img class="logo" id="brand-logo-img"
+          src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google">
+        <div>
+          <div class="brand-title" id="brand-title-text">Flow Studio</div>
+          <div class="brand-subtitle" id="brand-sub-text">Google Account Integration</div>
+        </div>
+      </div>
+      <div class="version" id="version-chip">v2.0.0</div>
+    </header>
+
+    <!-- UPDATE REQUIRED BANNER -->
+    <div id="update-required-banner"
+      style="display:none; background:var(--red-soft); border:1px solid rgba(242,139,130,.3); border-radius:10px; padding:10px 12px; margin:10px 12px 0;">
+      <div style="display:flex; align-items:center; gap:6px; margin-bottom:4px;">
+        <span style="font-size:14px;">⚠️</span>
+        <span style="color:var(--red); font-weight:500; font-size:12px;" id="update-banner-title">Update Required</span>
+      </div>
+      <p style="color:var(--text-secondary); font-size:11px; line-height:1.4; margin:0 0 8px;" id="update-banner-msg">A
+        new version of the extension is available. Please update to continue.</p>
+      <a id="update-download-btn" href="https://flowsstudio.lovable.app/flowfox.zip" target="_blank" rel="noopener"
+        style="display:flex; align-items:center; justify-content:center; gap:5px; background:var(--blue); color:var(--blue-text); font-weight:500; font-size:11px; padding:6px 12px; border-radius:16px; text-decoration:none;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+          <polyline points="7 10 12 15 17 10" />
+          <line x1="12" y1="15" x2="12" y2="3" />
+        </svg>
+        Download Extension Update (<span id="update-version-text">v2.0</span>)
+      </a>
+    </div>
+
+    <!-- LOADING SCREEN -->
+    <div id="loading-screen">
+      <div class="spinner"></div>
+      <span class="loading-text">Connecting to Google Flow...</span>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <main class="content">
+
+      <!-- LOGIN SCREEN -->
+      <div id="login-screen" style="display:none">
+        <div class="brand-display">
+          <img class="g-logo" src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg"
+            alt="Google" />
+          <h3 id="nc-title">Sign in required</h3>
+          <p id="nc-desc">Sign in with your Google account to Continue</p>
+        </div>
+
+        <button class="btn open-btn" id="login-btn" style="width:100%; margin-top:10px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+            <polyline points="10 17 15 12 10 7" />
+            <line x1="15" y1="12" x2="3" y2="12" />
+          </svg>
+          Sign In to Continue
+        </button>
+
+      </div>
+
+
+      <!-- STATUS / CONNECTED SCREEN -->
+      <div id="status-screen" style="display:none">
+
+        <!-- BANNERS -->
+        <div id="disabled-banner" class="disabled-banner" style="display:none">
+          <span>Session system disabled by admin. Cookies will not be injected.</span>
+        </div>
+
+        <div id="renew-banner" class="renew-banner" style="display:none">
+          <div class="renew-banner-title">Plan expiring soon</div>
+          <div class="renew-banner-msg" id="renew-msg">Your plan expires in <b id="renew-days">—</b> days. Renew to keep
+            access.</div>
+          <a class="renew-btn" href="https://flowsstudio.lovable.app" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+            </svg>
+            Contact Admin
+          </a>
+        </div>
+
+        <!-- ACCOUNT CARD -->
+        <section class="account">
+          <div class="account-top">
+            <div class="avatar" id="user-avatar">?</div>
+            <div class="account-info">
+              <div class="user-name" id="user-name">—</div>
+              <div class="plan-row">
+                <span class="plan-name" id="user-plan">—</span>
+                <span class="plan-dot"></span>
+                <span class="plan-days" id="user-days-container"><span id="user-days-text">—</span></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="subscription">
+            <div class="subscription-top">
+              <span class="subscription-label">Subscription status</span>
+              <span class="subscription-status" id="subscription-status-text">Active</span>
+            </div>
+            <div class="track">
+              <div class="progress" id="plan-progress-bar"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- STATS GRID -->
+        <section class="stats">
+          <div class="stat">
+            <div class="stat-label">Remaining access</div>
+            <div class="stat-value">
+              <span class="stat-number" id="ext2-days">—</span>
+              <span class="stat-unit">days</span>
+            </div>
+          </div>
+
+          <div class="stat">
+            <div class="stat-label">Active sessions</div>
+            <div class="stat-value">
+              <span class="stat-number" id="cookies-count">—</span>
+              <span class="stat-unit">sessions</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- FLOW CONNECTION SECTION -->
+        <section class="section">
+          <div class="section-title">Flow connection</div>
+
+          <div class="flow-card">
+            <div class="flow-info-row">
+              <div class="flow-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path d="M7 17L17 7" />
+                  <path d="M9 7h8v8" />
+                </svg>
+              </div>
+
+              <div class="flow-copy">
+                <div class="flow-name">Google Flow</div>
+                <div class="flow-status" id="page-indicator">
+                  <span class="status-dot"></span>
+                  <span id="page-text">Not on Google Flow</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="actions">
+              <button class="btn open-btn" id="inject-btn" style="display:none">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path d="M7 17L17 7" />
+                  <path d="M9 7h8v8" />
+                </svg>
+                Open Google Flow
+              </button>
+
+              <button class="btn disconnect" id="logout-btn" title="Disconnect">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path d="M12 3v9" />
+                  <path d="M7.05 4.93a9 9 0 1 0 9.9 0" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </section>
+
+      </div>
+
+    </main>
+
+  </div>
+
+  <script src="popup.js"></script>
+  <script src="ext2_info.js"></script>
+</body>
+
+</html>

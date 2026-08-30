@@ -1,0 +1,4132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#ffffff" />
+
+  <title>Flow Labs — Unlimited AI Video</title>
+
+  <!-- =========================================================
+       INTER — USED EVERYWHERE
+       ========================================================= -->
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    /* =========================================================
+       FLOW LABS
+       Premium minimal AI video landing page
+       Font: Inter everywhere
+       ========================================================= */
+
+    :root {
+      --font: "Inter", sans-serif;
+
+      --white: #ffffff;
+      --black: #202124;
+
+      --gray-950: #171717;
+      --gray-900: #292a2d;
+      --gray-800: #3c4043;
+      --gray-700: #5f6368;
+      --gray-600: #70757a;
+      --gray-500: #80868b;
+      --gray-400: #9aa0a6;
+      --gray-300: #bdc1c6;
+      --gray-200: #dadce0;
+      --gray-150: #e8eaed;
+      --gray-100: #f1f3f4;
+      --gray-50: #f8f9fa;
+
+      --blue: #1a73e8;
+      --blue-dark: #185abc;
+      --blue-light: #e8f0fe;
+
+      --green: #34a853;
+      --green-dark: #137333;
+      --green-light: #e6f4ea;
+
+      --red: #ea4335;
+      --yellow: #fbbc04;
+
+      --max: 1180px;
+
+      --ease: cubic-bezier(.2, .8, .2, 1);
+    }
+
+
+    /* =========================================================
+       RESET
+       ========================================================= */
+
+    *,
+    *::before,
+    *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+
+      /*
+        This is intentional.
+        Every element gets Inter.
+      */
+      font-family: "Inter", sans-serif !important;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: var(--white);
+      color: var(--black);
+
+      font-family: "Inter", sans-serif !important;
+
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+
+      text-rendering: optimizeLegibility;
+
+      overflow-x: hidden;
+    }
+
+    button,
+    input,
+    textarea,
+    select {
+      font-family: "Inter", sans-serif !important;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button {
+      border: 0;
+      cursor: pointer;
+    }
+
+    img {
+      max-width: 100%;
+      display: block;
+    }
+
+    ::selection {
+      color: white;
+      background: var(--blue);
+    }
+
+
+    /* =========================================================
+       CONTAINER
+       ========================================================= */
+
+    .container {
+      width: min(calc(100% - 40px), var(--max));
+      margin: 0 auto;
+    }
+
+
+    /* =========================================================
+       NAVIGATION
+       ========================================================= */
+
+    .navbar {
+      position: fixed;
+
+      top: 0;
+      left: 0;
+
+      width: 100%;
+
+      z-index: 1000;
+
+      padding: 12px 0;
+
+      transition:
+        padding .25s ease,
+        background .25s ease,
+        border-color .25s ease;
+    }
+
+    .navbar.scrolled {
+      padding: 7px 0;
+
+      background: rgba(255, 255, 255, .88);
+
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
+
+      border-bottom: 1px solid rgba(218, 220, 224, .75);
+    }
+
+    .nav {
+      height: 60px;
+
+      display: flex;
+      align-items: center;
+
+      padding: 0 8px 0 14px;
+
+      border: 1px solid transparent;
+      border-radius: 18px;
+    }
+
+    .navbar.scrolled .nav {
+      border-color: rgba(218, 220, 224, .45);
+    }
+
+
+    /* Brand */
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+
+      gap: 10px;
+
+      font-size: 19px;
+      font-weight: 700;
+
+      letter-spacing: -0.5px;
+
+      white-space: nowrap;
+    }
+
+    .logo {
+      width: 31px;
+      height: 31px;
+
+      position: relative;
+
+      display: grid;
+      place-items: center;
+    }
+
+    .logo-shape {
+      width: 23px;
+      height: 23px;
+
+      border-radius: 8px;
+
+      transform: rotate(45deg);
+
+      background:
+        conic-gradient(from 35deg,
+          #4285f4 0 27%,
+          #34a853 27% 53%,
+          #fbbc04 53% 76%,
+          #ea4335 76% 100%);
+    }
+
+    .logo-hole {
+      position: absolute;
+
+      width: 10px;
+      height: 10px;
+
+      border-radius: 50%;
+
+      background: white;
+    }
+
+
+    /* Nav links */
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+
+      gap: 2px;
+
+      margin-left: 48px;
+    }
+
+    .nav-links a {
+      padding: 10px 13px;
+
+      color: var(--gray-700);
+
+      border-radius: 10px;
+
+      font-size: 13px;
+      font-weight: 500;
+
+      transition:
+        color .2s ease,
+        background .2s ease;
+    }
+
+    .nav-links a:hover {
+      color: var(--black);
+      background: var(--gray-100);
+    }
+
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+
+      gap: 4px;
+
+      margin-left: auto;
+    }
+
+
+    /* =========================================================
+       BUTTONS
+       ========================================================= */
+
+    .btn {
+      position: relative;
+
+      min-height: 44px;
+
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+
+      gap: 8px;
+
+      padding: 0 19px;
+
+      overflow: hidden;
+
+      border-radius: 999px;
+
+      font-size: 13px;
+      font-weight: 600;
+
+      letter-spacing: -0.1px;
+
+      transition:
+        transform .2s var(--ease),
+        background .2s ease,
+        border-color .2s ease,
+        color .2s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn:active {
+      transform: scale(.98);
+    }
+
+    .btn-primary {
+      color: white;
+
+      background: var(--blue);
+    }
+
+    .btn-primary:hover {
+      background: var(--blue-dark);
+    }
+
+    .btn-outline {
+      color: var(--black);
+
+      background: white;
+
+      border: 1px solid var(--gray-200);
+    }
+
+    .btn-outline:hover {
+      background: var(--gray-50);
+      border-color: #c4c7ca;
+    }
+
+    .btn-text {
+      color: var(--blue);
+
+      background: transparent;
+    }
+
+    .btn-text:hover {
+      background: var(--blue-light);
+    }
+
+
+    /* Mobile button */
+
+    .mobile-toggle {
+      display: none;
+
+      width: 42px;
+      height: 42px;
+
+      align-items: center;
+      justify-content: center;
+
+      border: 1px solid var(--gray-200);
+
+      border-radius: 50%;
+
+      color: var(--black);
+
+      background: white;
+
+      font-size: 17px;
+    }
+
+
+    /* =========================================================
+       HERO
+       ========================================================= */
+
+    .hero {
+      position: relative;
+
+      padding: 155px 0 100px;
+
+      overflow: hidden;
+
+      background:
+        radial-gradient(ellipse 620px 420px at 50% -8%,
+          rgba(66, 133, 244, .095),
+          transparent 72%);
+    }
+
+    .hero-grid {
+      position: absolute;
+
+      inset: 0;
+
+      opacity: .45;
+
+      background-image:
+        linear-gradient(rgba(60, 64, 67, .028) 1px,
+          transparent 1px),
+        linear-gradient(90deg,
+          rgba(60, 64, 67, .028) 1px,
+          transparent 1px);
+
+      background-size: 64px 64px;
+
+      mask-image:
+        linear-gradient(to bottom,
+          black,
+          transparent 72%);
+    }
+
+    .hero-orb {
+      position: absolute;
+
+      width: 500px;
+      height: 500px;
+
+      border-radius: 50%;
+
+      pointer-events: none;
+
+      filter: blur(5px);
+
+      transition: transform .4s ease;
+    }
+
+    .orb-one {
+      left: -280px;
+      top: 70px;
+
+      background:
+        radial-gradient(circle,
+          rgba(66, 133, 244, .11),
+          transparent 70%);
+    }
+
+    .orb-two {
+      right: -280px;
+      top: 170px;
+
+      background:
+        radial-gradient(circle,
+          rgba(52, 168, 83, .075),
+          transparent 70%);
+    }
+
+    .hero-inner {
+      position: relative;
+
+      z-index: 2;
+
+      text-align: center;
+    }
+
+
+    /* Live */
+
+    .live {
+      display: inline-flex;
+      align-items: center;
+
+      gap: 9px;
+
+      padding: 7px 13px 7px 9px;
+
+      margin-bottom: 31px;
+
+      border: 1px solid var(--gray-200);
+
+      border-radius: 999px;
+
+      color: var(--gray-700);
+
+      background: rgba(255, 255, 255, .84);
+
+      backdrop-filter: blur(12px);
+
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+
+      border-radius: 50%;
+
+      background: var(--green);
+
+      box-shadow:
+        0 0 0 5px rgba(52, 168, 83, .10);
+
+      animation: livePulse 2s infinite;
+    }
+
+    @keyframes livePulse {
+
+      0%,
+      100% {
+        box-shadow:
+          0 0 0 4px rgba(52, 168, 83, .13);
+      }
+
+      50% {
+        box-shadow:
+          0 0 0 8px rgba(52, 168, 83, .025);
+      }
+    }
+
+
+    /* Hero type */
+
+    .hero h1 {
+      max-width: 940px;
+
+      margin: 0 auto;
+
+      font-size: clamp(58px, 8vw, 100px);
+
+      line-height: .95;
+
+      font-weight: 700;
+
+      letter-spacing: -6px;
+    }
+
+    .gradient {
+      background:
+        linear-gradient(90deg,
+          #4285f4 0%,
+          #1a73e8 30%,
+          #7b61ff 62%,
+          #34a853 100%);
+
+      -webkit-background-clip: text;
+      background-clip: text;
+
+      color: transparent;
+    }
+
+    .hero-copy {
+      max-width: 680px;
+
+      margin: 29px auto 0;
+
+      color: var(--gray-700);
+
+      font-size: 17px;
+
+      line-height: 1.7;
+
+      font-weight: 400;
+    }
+
+    .hero-copy strong {
+      color: var(--black);
+
+      font-weight: 600;
+    }
+
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      gap: 10px;
+
+      margin-top: 31px;
+    }
+
+    .hero-actions .btn {
+      min-height: 51px;
+
+      padding: 0 23px;
+
+      font-size: 14px;
+    }
+
+    .hero-footnote {
+      margin-top: 17px;
+
+      color: var(--gray-500);
+
+      font-size: 11px;
+
+      font-weight: 500;
+    }
+
+
+    /* =========================================================
+       PRODUCT PREVIEW
+       ========================================================= */
+
+    .product-wrap {
+      max-width: 1000px;
+
+      margin: 70px auto 0;
+
+      padding: 1px;
+
+      border-radius: 28px;
+
+      background:
+        linear-gradient(135deg,
+          rgba(66, 133, 244, .28),
+          rgba(218, 220, 224, .8),
+          rgba(52, 168, 83, .17));
+    }
+
+    .product {
+      display: grid;
+
+      grid-template-columns: 175px 1fr;
+
+      min-height: 390px;
+
+      overflow: hidden;
+
+      border-radius: 27px;
+
+      border: 1px solid rgba(218, 220, 224, .8);
+
+      background: white;
+    }
+
+    .product-sidebar {
+      padding: 18px 12px;
+
+      background: #f8f9fa;
+
+      border-right: 1px solid var(--gray-150);
+    }
+
+    .product-brand {
+      display: flex;
+      align-items: center;
+
+      gap: 8px;
+
+      padding: 7px 9px 20px;
+
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .mini-logo {
+      width: 20px;
+      height: 20px;
+
+      border-radius: 7px;
+
+      background:
+        conic-gradient(#4285f4,
+          #34a853,
+          #fbbc04,
+          #ea4335,
+          #4285f4);
+    }
+
+    .side-link {
+      padding: 10px 11px;
+
+      margin-bottom: 3px;
+
+      border-radius: 8px;
+
+      color: var(--gray-700);
+
+      font-size: 10px;
+      font-weight: 500;
+    }
+
+    .side-link.active {
+      color: #1967d2;
+
+      background: var(--blue-light);
+
+      font-weight: 600;
+    }
+
+    .product-main {
+      padding: 28px;
+
+      background:
+        radial-gradient(circle at 85% 10%,
+          rgba(66, 133, 244, .07),
+          transparent 30%);
+    }
+
+    .product-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .product-title {
+      font-size: 17px;
+      font-weight: 700;
+
+      letter-spacing: -.3px;
+    }
+
+    .product-user {
+      width: 30px;
+      height: 30px;
+
+      border-radius: 50%;
+
+      background:
+        linear-gradient(135deg,
+          #4285f4,
+          #7b61ff);
+    }
+
+    .prompt {
+      display: flex;
+      align-items: center;
+
+      gap: 12px;
+
+      margin-top: 25px;
+      padding: 15px;
+
+      border: 1px solid var(--gray-200);
+
+      border-radius: 14px;
+
+      text-align: left;
+
+      background: white;
+    }
+
+    .prompt-text {
+      flex: 1;
+
+      color: var(--gray-700);
+
+      font-size: 10px;
+
+      line-height: 1.6;
+
+      font-weight: 400;
+    }
+
+    .prompt-send {
+      width: 34px;
+      height: 34px;
+
+      flex-shrink: 0;
+
+      display: grid;
+      place-items: center;
+
+      border-radius: 50%;
+
+      color: white;
+
+      background: var(--blue);
+
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .generation-label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      margin-top: 22px;
+      margin-bottom: 10px;
+    }
+
+    .generation-label span:first-child {
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    .generation-label span:last-child {
+      color: var(--gray-500);
+
+      font-size: 9px;
+      font-weight: 500;
+    }
+
+    .video-grid {
+      display: grid;
+
+      grid-template-columns: repeat(3, 1fr);
+
+      gap: 11px;
+    }
+
+    .video {
+      position: relative;
+
+      aspect-ratio: 16 / 10;
+
+      overflow: hidden;
+
+      border-radius: 11px;
+    }
+
+    .video::after {
+      content: "▶";
+
+      position: absolute;
+
+      left: 50%;
+      top: 50%;
+
+      transform: translate(-50%, -50%);
+
+      width: 35px;
+      height: 35px;
+
+      display: grid;
+      place-items: center;
+
+      color: white;
+
+      border-radius: 50%;
+
+      background: rgba(255, 255, 255, .16);
+
+      backdrop-filter: blur(10px);
+
+      border: 1px solid rgba(255, 255, 255, .3);
+
+      font-size: 9px;
+    }
+
+    .video-one {
+      background:
+        radial-gradient(circle at 70% 30%,
+          #a9d7ff,
+          transparent 19%),
+        linear-gradient(135deg,
+          #102b53,
+          #3971b9 55%,
+          #b7d9fa);
+    }
+
+    .video-two {
+      background:
+        radial-gradient(circle at 28% 33%,
+          #ffe0b0,
+          transparent 18%),
+        linear-gradient(135deg,
+          #44271a,
+          #ae7044 55%,
+          #f0c693);
+    }
+
+    .video-three {
+      background:
+        radial-gradient(circle at 50% 25%,
+          #dfc7ff,
+          transparent 20%),
+        linear-gradient(135deg,
+          #171326,
+          #5c4e8a 55%,
+          #bca8e9);
+    }
+
+
+    /* =========================================================
+       TRUST
+       ========================================================= */
+
+    .trust-bar {
+      padding: 24px 0;
+
+      border-top: 1px solid var(--gray-150);
+      border-bottom: 1px solid var(--gray-150);
+    }
+
+    .trust-content {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      gap: 13px;
+
+      color: var(--gray-700);
+
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .stars {
+      color: #f9ab00;
+
+      letter-spacing: 2px;
+    }
+
+    .trust-divider {
+      width: 1px;
+      height: 17px;
+
+      background: var(--gray-200);
+
+      margin: 0 8px;
+    }
+
+
+    /* =========================================================
+       SECTIONS
+       ========================================================= */
+
+    .section {
+      padding: 110px 0;
+    }
+
+    .section-head {
+      max-width: 690px;
+
+      margin: 0 auto 54px;
+
+      text-align: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+
+      gap: 7px;
+
+      margin-bottom: 15px;
+
+      color: #1967d2;
+
+      font-size: 11px;
+      font-weight: 700;
+
+      letter-spacing: .12em;
+
+      text-transform: uppercase;
+    }
+
+    .eyebrow::before {
+      content: "";
+
+      width: 7px;
+      height: 7px;
+
+      border-radius: 50%;
+
+      background: var(--blue);
+    }
+
+    .section-head h2 {
+      font-size: clamp(38px, 5vw, 57px);
+
+      line-height: 1.03;
+
+      font-weight: 700;
+
+      letter-spacing: -3.5px;
+    }
+
+    .section-head p {
+      margin-top: 17px;
+
+      color: var(--gray-700);
+
+      font-size: 15px;
+
+      line-height: 1.7;
+
+      font-weight: 400;
+    }
+
+
+    /* =========================================================
+       STATS
+       ========================================================= */
+
+    .stats-section {
+      padding: 100px 0;
+    }
+
+    .stats {
+      display: grid;
+
+      grid-template-columns: repeat(3, 1fr);
+
+      overflow: hidden;
+
+      border: 1px solid var(--gray-200);
+
+      border-radius: 24px;
+    }
+
+    .stat {
+      padding: 43px 20px;
+
+      text-align: center;
+
+      background: white;
+    }
+
+    .stat+.stat {
+      border-left: 1px solid var(--gray-200);
+    }
+
+    .stat-number {
+      font-size: 42px;
+
+      line-height: 1;
+
+      font-weight: 700;
+
+      letter-spacing: -2.5px;
+    }
+
+    .stat-label {
+      margin-top: 8px;
+
+      color: var(--gray-700);
+
+      font-size: 12px;
+
+      font-weight: 500;
+    }
+
+
+    /* =========================================================
+       OFFER
+       ========================================================= */
+
+    .offer-section {
+      padding: 25px 0 110px;
+    }
+
+    .offer {
+      position: relative;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      gap: 45px;
+
+      overflow: hidden;
+
+      padding: 60px;
+
+      border: 1px solid #dfe4ec;
+
+      border-radius: 32px;
+
+      background:
+        radial-gradient(circle at 100% 0,
+          rgba(66, 133, 244, .14),
+          transparent 32%),
+        radial-gradient(circle at 0 100%,
+          rgba(52, 168, 83, .09),
+          transparent 32%),
+        #f8fafd;
+    }
+
+    .offer-content {
+      position: relative;
+      z-index: 2;
+    }
+
+    .offer-label {
+      display: inline-flex;
+
+      padding: 7px 11px;
+
+      border: 1px solid #dfe4ec;
+
+      border-radius: 999px;
+
+      color: #1967d2;
+
+      background: white;
+
+      font-size: 9px;
+      font-weight: 700;
+
+      letter-spacing: .09em;
+
+      text-transform: uppercase;
+
+      margin-bottom: 18px;
+    }
+
+    .offer h2 {
+      max-width: 680px;
+
+      font-size: clamp(35px, 4vw, 52px);
+
+      line-height: 1.04;
+
+      letter-spacing: -3px;
+
+      font-weight: 700;
+    }
+
+    .offer p {
+      max-width: 610px;
+
+      margin-top: 16px;
+
+      color: var(--gray-700);
+
+      font-size: 14px;
+
+      line-height: 1.7;
+    }
+
+    .offer-action {
+      min-width: 230px;
+
+      position: relative;
+
+      z-index: 2;
+    }
+
+    .offer-action .btn {
+      width: 100%;
+
+      min-height: 53px;
+    }
+
+    .offer-note {
+      margin-top: 9px;
+
+      color: var(--gray-500);
+
+      font-size: 10px;
+
+      font-weight: 500;
+
+      text-align: center;
+    }
+
+
+    /* =========================================================
+       PRICING
+       ========================================================= */
+
+    .pricing {
+      background: #f8fafd;
+
+      border-top: 1px solid #eef0f3;
+      border-bottom: 1px solid #eef0f3;
+    }
+
+    .pricing-grid {
+      display: grid;
+
+      grid-template-columns: repeat(3, 1fr);
+
+      gap: 18px;
+    }
+
+    .price-card {
+      position: relative;
+
+      padding: 32px;
+
+      border: 1px solid var(--gray-200);
+
+      border-radius: 24px;
+
+      background: white;
+
+      transition:
+        transform .3s var(--ease),
+        border-color .3s ease;
+    }
+
+    .price-card:hover {
+      transform: translateY(-4px);
+
+      border-color: #b8bdc3;
+    }
+
+    .price-card.featured {
+      border: 2px solid var(--blue);
+
+      transform: translateY(-7px);
+    }
+
+    .price-card.featured:hover {
+      transform: translateY(-11px);
+    }
+
+    .popular {
+      position: absolute;
+
+      top: 21px;
+      right: 21px;
+
+      padding: 6px 9px;
+
+      color: #1967d2;
+
+      background: var(--blue-light);
+
+      border-radius: 999px;
+
+      font-size: 9px;
+      font-weight: 700;
+
+      letter-spacing: .06em;
+
+      text-transform: uppercase;
+    }
+
+    .plan-name {
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .price {
+      display: flex;
+      align-items: baseline;
+
+      gap: 5px;
+
+      margin-top: 19px;
+    }
+
+    .price strong {
+      font-size: 49px;
+
+      line-height: 1;
+
+      letter-spacing: -3px;
+
+      font-weight: 700;
+    }
+
+    .price span {
+      color: var(--gray-700);
+
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    .old-price {
+      margin-top: 9px;
+
+      color: var(--gray-500);
+
+      font-size: 11px;
+
+      font-weight: 500;
+    }
+
+    .saving {
+      margin-left: 4px;
+
+      color: var(--green-dark);
+
+      font-weight: 600;
+    }
+
+    .features {
+      list-style: none;
+
+      margin: 29px 0;
+
+      padding-top: 24px;
+
+      border-top: 1px solid #eef0f2;
+    }
+
+    .features li {
+      display: flex;
+      align-items: center;
+
+      gap: 10px;
+
+      margin-bottom: 14px;
+
+      color: var(--gray-900);
+
+      font-size: 12px;
+
+      font-weight: 500;
+    }
+
+    .check {
+      width: 19px;
+      height: 19px;
+
+      flex-shrink: 0;
+
+      display: grid;
+      place-items: center;
+
+      border-radius: 50%;
+
+      color: var(--green-dark);
+
+      background: var(--green-light);
+
+      font-size: 9px;
+
+      font-weight: 800;
+    }
+
+    .price-card .btn {
+      width: 100%;
+
+      min-height: 48px;
+    }
+
+
+    /* =========================================================
+       TESTIMONIALS
+       ========================================================= */
+
+    .testimonials {
+      display: grid;
+
+      grid-template-columns: repeat(3, 1fr);
+
+      gap: 18px;
+    }
+
+    .testimonial {
+      padding: 30px;
+
+      border: 1px solid var(--gray-200);
+
+      border-radius: 22px;
+
+      background: white;
+
+      transition:
+        transform .3s var(--ease),
+        border-color .3s ease;
+    }
+
+    .testimonial:hover {
+      transform: translateY(-4px);
+
+      border-color: #bcc1c6;
+    }
+
+    .quote {
+      min-height: 142px;
+
+      color: var(--gray-900);
+
+      font-size: 14px;
+
+      line-height: 1.7;
+
+      font-weight: 400;
+    }
+
+    .person {
+      display: flex;
+      align-items: center;
+
+      gap: 12px;
+
+      padding-top: 22px;
+
+      border-top: 1px solid #eef0f2;
+    }
+
+    .avatar {
+      width: 40px;
+      height: 40px;
+
+      display: grid;
+      place-items: center;
+
+      border-radius: 50%;
+
+      color: white;
+
+      font-size: 12px;
+
+      font-weight: 700;
+    }
+
+    .avatar-a {
+      background:
+        linear-gradient(135deg,
+          #4285f4,
+          #7b61ff);
+    }
+
+    .avatar-p {
+      background:
+        linear-gradient(135deg,
+          #34a853,
+          #1a73e8);
+    }
+
+    .avatar-k {
+      background:
+        linear-gradient(135deg,
+          #ea4335,
+          #fbbc04);
+    }
+
+    .person-name {
+      font-size: 12px;
+
+      font-weight: 600;
+    }
+
+    .person-role {
+      margin-top: 3px;
+
+      color: var(--gray-500);
+
+      font-size: 10px;
+
+      font-weight: 500;
+    }
+
+
+    /* =========================================================
+       FAQ
+       ========================================================= */
+
+    .faq {
+      max-width: 760px;
+
+      margin: auto;
+
+      border-top: 1px solid var(--gray-200);
+    }
+
+    .faq-item {
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .faq-question {
+      width: 100%;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      gap: 20px;
+
+      padding: 22px 2px;
+
+      color: var(--black);
+
+      background: transparent;
+
+      text-align: left;
+
+      font-size: 14px;
+
+      font-weight: 600;
+    }
+
+    .faq-icon {
+      width: 30px;
+      height: 30px;
+
+      flex-shrink: 0;
+
+      display: grid;
+      place-items: center;
+
+      border-radius: 50%;
+
+      color: var(--gray-700);
+
+      background: var(--gray-100);
+
+      font-size: 18px;
+
+      font-weight: 400;
+
+      transition: transform .3s ease;
+    }
+
+    .faq-answer {
+      max-height: 0;
+
+      overflow: hidden;
+
+      transition: max-height .35s ease;
+    }
+
+    .faq-answer p {
+      padding: 0 45px 22px 2px;
+
+      color: var(--gray-700);
+
+      font-size: 13px;
+
+      line-height: 1.75;
+
+      font-weight: 400;
+    }
+
+    .faq-item.open .faq-icon {
+      transform: rotate(45deg);
+    }
+
+
+    /* =========================================================
+       FINAL CTA
+       ========================================================= */
+
+    .final {
+      padding: 110px 0;
+    }
+
+    .final-card {
+      position: relative;
+
+      overflow: hidden;
+
+      padding: 82px 30px;
+
+      border-radius: 34px;
+
+      background: #202124;
+
+      color: white;
+
+      text-align: center;
+    }
+
+    .final-card::before {
+      content: "";
+
+      position: absolute;
+
+      width: 480px;
+      height: 480px;
+
+      left: -200px;
+      top: -300px;
+
+      border-radius: 50%;
+
+      background: rgba(66, 133, 244, .23);
+
+      filter: blur(25px);
+    }
+
+    .final-card::after {
+      content: "";
+
+      position: absolute;
+
+      width: 430px;
+      height: 430px;
+
+      right: -180px;
+      bottom: -300px;
+
+      border-radius: 50%;
+
+      background: rgba(52, 168, 83, .19);
+
+      filter: blur(25px);
+    }
+
+    .final-content {
+      position: relative;
+
+      z-index: 2;
+    }
+
+    .final-card h2 {
+      font-size: clamp(43px, 6vw, 68px);
+
+      line-height: .98;
+
+      letter-spacing: -4px;
+
+      font-weight: 700;
+    }
+
+    .final-card p {
+      max-width: 580px;
+
+      margin: 19px auto 29px;
+
+      color: #bdc1c6;
+
+      font-size: 14px;
+
+      line-height: 1.7;
+
+      font-weight: 400;
+    }
+
+    .final-card .btn-primary {
+      color: var(--black);
+
+      background: white;
+    }
+
+    .final-card .btn-primary:hover {
+      background: #f1f3f4;
+    }
+
+
+    /* =========================================================
+       FOOTER
+       ========================================================= */
+
+    footer {
+      padding: 50px 0 28px;
+
+      border-top: 1px solid var(--gray-150);
+    }
+
+    .footer-grid {
+      display: grid;
+
+      grid-template-columns: 1.6fr repeat(3, 1fr);
+
+      gap: 50px;
+
+      padding-bottom: 45px;
+    }
+
+    .footer-description {
+      max-width: 290px;
+
+      margin-top: 14px;
+
+      color: var(--gray-700);
+
+      font-size: 12px;
+
+      line-height: 1.7;
+
+      font-weight: 400;
+    }
+
+    .footer-column h4 {
+      margin-bottom: 17px;
+
+      font-size: 11px;
+
+      font-weight: 700;
+    }
+
+    .footer-column a {
+      display: block;
+
+      width: fit-content;
+
+      margin-bottom: 11px;
+
+      color: var(--gray-700);
+
+      font-size: 11px;
+
+      font-weight: 500;
+
+      transition: color .2s ease;
+    }
+
+    .footer-column a:hover {
+      color: var(--blue);
+    }
+
+    .footer-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      gap: 20px;
+
+      padding-top: 23px;
+
+      border-top: 1px solid var(--gray-150);
+
+      color: var(--gray-500);
+
+      font-size: 10px;
+
+      font-weight: 500;
+    }
+
+    .socials {
+      display: flex;
+
+      gap: 8px;
+    }
+
+    .social {
+      width: 33px;
+      height: 33px;
+
+      display: grid;
+      place-items: center;
+
+      border: 1px solid var(--gray-200);
+
+      border-radius: 50%;
+
+      font-size: 10px;
+
+      font-weight: 600;
+
+      transition:
+        color .2s ease,
+        background .2s ease,
+        border-color .2s ease;
+    }
+
+    .social:hover {
+      color: var(--blue);
+
+      background: var(--gray-100);
+
+      border-color: var(--gray-300);
+    }
+
+
+    /* =========================================================
+       MOBILE MENU
+       ========================================================= */
+
+    .mobile-menu {
+      display: none;
+
+      position: absolute;
+
+      top: 70px;
+      left: 20px;
+      right: 20px;
+
+      padding: 10px;
+
+      border: 1px solid var(--gray-200);
+
+      border-radius: 20px;
+
+      background: rgba(255, 255, 255, .96);
+
+      backdrop-filter: blur(20px);
+    }
+
+    .mobile-menu.open {
+      display: block;
+    }
+
+    .mobile-menu a {
+      display: block;
+
+      padding: 13px;
+
+      border-radius: 10px;
+
+      color: var(--gray-700);
+
+      font-size: 13px;
+
+      font-weight: 500;
+    }
+
+    .mobile-menu a:hover {
+      background: var(--gray-100);
+    }
+
+
+    /* =========================================================
+       REVEAL
+       ========================================================= */
+
+    .reveal {
+      opacity: 0;
+
+      transform: translateY(20px);
+
+      transition:
+        opacity .7s var(--ease),
+        transform .7s var(--ease);
+    }
+
+    .reveal.visible {
+      opacity: 1;
+
+      transform: translateY(0);
+    }
+
+
+    /* =========================================================
+       RIPPLE
+       ========================================================= */
+
+    .ripple {
+      position: absolute;
+
+      width: 120px;
+      height: 120px;
+
+      border-radius: 50%;
+
+      background: rgba(255, 255, 255, .18);
+
+      pointer-events: none;
+
+      transform: scale(0);
+
+      animation: ripple .55s ease-out;
+    }
+
+    @keyframes ripple {
+      to {
+        transform: scale(3);
+        opacity: 0;
+      }
+    }
+
+
+    /* =========================================================
+       RESPONSIVE — TABLET
+       ========================================================= */
+
+    @media (max-width: 900px) {
+
+      .nav-links {
+        display: none;
+      }
+
+      .nav-right .btn-text {
+        display: none;
+      }
+
+      .mobile-toggle {
+        display: flex;
+      }
+
+      .mobile-menu {
+        display: none;
+      }
+
+      .mobile-menu.open {
+        display: block;
+      }
+
+      .offer {
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        padding: 45px;
+      }
+
+      .offer-action {
+        width: 100%;
+      }
+
+      .footer-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+
+    /* =========================================================
+       RESPONSIVE — MOBILE
+       ========================================================= */
+
+    @media (max-width: 700px) {
+
+      .container {
+        width: min(calc(100% - 28px),
+            var(--max));
+      }
+
+      .hero {
+        padding: 130px 0 70px;
+      }
+
+      .hero h1 {
+        font-size: clamp(50px, 15vw, 75px);
+
+        letter-spacing: -4px;
+      }
+
+      .hero-copy {
+        font-size: 15px;
+      }
+
+      .hero-actions {
+        flex-direction: column;
+
+        width: min(100%, 310px);
+
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .hero-actions .btn {
+        width: 100%;
+      }
+
+      .product {
+        grid-template-columns: 1fr;
+      }
+
+      .product-sidebar {
+        display: none;
+      }
+
+      .product-main {
+        padding: 18px;
+      }
+
+      .product-wrap {
+        border-radius: 21px;
+      }
+
+      .stats {
+        grid-template-columns: 1fr;
+      }
+
+      .stat+.stat {
+        border-left: 0;
+
+        border-top: 1px solid var(--gray-200);
+      }
+
+      .section,
+      .stats-section,
+      .final {
+        padding: 75px 0;
+      }
+
+      .section-head {
+        margin-bottom: 38px;
+      }
+
+      .section-head h2 {
+        letter-spacing: -2.5px;
+      }
+
+      .pricing-grid,
+      .testimonials {
+        grid-template-columns: 1fr;
+      }
+
+      .price-card.featured,
+      .price-card.featured:hover {
+        transform: none;
+      }
+
+      .offer {
+        padding: 35px 25px;
+
+        border-radius: 25px;
+      }
+
+      .offer h2 {
+        letter-spacing: -2px;
+      }
+
+      .quote {
+        min-height: auto;
+
+        margin-bottom: 25px;
+      }
+
+      .footer-grid {
+        grid-template-columns: 1fr 1fr;
+
+        gap: 35px 20px;
+      }
+
+      .footer-brand {
+        grid-column: 1 / -1;
+      }
+
+      .footer-bottom {
+        flex-direction: column;
+
+        align-items: flex-start;
+      }
+    }
+
+
+    /* =========================================================
+       SMALL PHONES
+       ========================================================= */
+
+    @media (max-width: 430px) {
+
+      .nav-right .btn-primary {
+        display: none;
+      }
+
+      .brand {
+        font-size: 17px;
+      }
+
+      .trust-content {
+        flex-wrap: wrap;
+
+        gap: 9px 13px;
+
+        text-align: center;
+      }
+
+      .trust-divider {
+        display: none;
+      }
+
+      .footer-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .footer-brand {
+        grid-column: auto;
+      }
+    }
+
+
+    /* =========================================================
+       CLAIM FREE ULTRA ACCOUNT MODAL POPUP (LIGHT MATCHED THEME)
+       ========================================================= */
+
+    .claim-modal-overlay {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: rgba(32, 33, 36, 0.45);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 1000;
+    }
+
+    .claim-modal-overlay.show {
+      display: flex;
+      animation: fadeInModal 0.25s ease-out forwards;
+    }
+
+    @keyframes fadeInModal {
+      from {
+        opacity: 0;
+        transform: scale(0.96);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .claim-modal-card {
+      position: relative;
+      width: min(480px, 100%);
+      background: #ffffff;
+      border: 1px solid #dadce0;
+      border-radius: 24px;
+      padding: 36px 32px;
+      box-shadow: 0 20px 60px rgba(60, 64, 67, 0.2);
+      color: #202124;
+      text-align: center;
+    }
+
+    .claim-modal-close {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: #f1f3f4;
+      color: #5f6368;
+      border: none;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      font-size: 16px;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+
+    .claim-modal-close:hover {
+      background: #e8eaed;
+      color: #202124;
+    }
+
+    .claim-modal-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 14px;
+      border-radius: 100px;
+      background: #e8f0fe;
+      border: 1px solid #aecbfa;
+      color: #1a73e8;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 16px;
+    }
+
+    .claim-modal-title {
+      font-size: 24px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+      color: #202124;
+    }
+
+    .claim-modal-context {
+      font-size: 14px;
+      color: #5f6368;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+
+    .claim-whatsapp-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      min-height: 48px;
+      padding: 0 20px;
+      border-radius: 12px;
+      background: #25d366;
+      color: #ffffff;
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      box-shadow: 0 4px 14px rgba(37, 211, 102, 0.3);
+    }
+
+    .claim-whatsapp-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(37, 211, 102, 0.4);
+    }
+
+    .claim-instruction-divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 24px 0 18px;
+      color: #80868b;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .claim-instruction-divider::before,
+    .claim-instruction-divider::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: #dadce0;
+    }
+
+    .claim-input-group {
+      margin-bottom: 18px;
+      text-align: left;
+    }
+
+    .claim-input-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: #3c4043;
+      margin-bottom: 6px;
+    }
+
+    .claim-input {
+      width: 100%;
+      height: 48px;
+      padding: 0 16px;
+      border-radius: 10px;
+      border: 1px solid #dadce0;
+      background: #ffffff;
+      color: #202124;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .claim-input:focus {
+      border-color: #1a73e8;
+      box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.15);
+      outline: none;
+    }
+
+    .claim-submit-btn {
+      width: 100%;
+      min-height: 48px;
+      border-radius: 10px;
+      background: #1a73e8;
+      color: #ffffff;
+      font-size: 14px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+      box-shadow: 0 4px 12px rgba(26, 115, 232, 0.25);
+    }
+
+    .claim-submit-btn:hover {
+      background: #1558b0;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(26, 115, 232, 0.35);
+    }
+
+    .claim-error-msg {
+      display: none;
+      margin-top: 14px;
+      padding: 12px 16px;
+      border-radius: 10px;
+      background: #fce8e6;
+      border: 1px solid #fad2cf;
+      color: #c5221f;
+      font-size: 13px;
+      text-align: left;
+    }
+  </style>
+
+</head>
+
+
+<body>
+
+  <!-- =========================================================
+       NAVIGATION
+       ========================================================= -->
+
+  <header class="navbar" id="navbar">
+
+    <div class="container">
+
+      <nav class="nav">
+
+        <a href="#top" class="brand">
+
+          <span class="logo">
+            <span class="logo-shape"></span>
+            <span class="logo-hole"></span>
+          </span>
+
+          <span>Flow Labs</span>
+
+        </a>
+
+
+        <div class="nav-links">
+
+          <a href="#product">Product</a>
+          <a href="#pricing">Pricing</a>
+          <a href="#stories">Stories</a>
+          <a href="#faq">Help</a>
+
+        </div>
+
+
+        <div class="nav-right">
+
+          <a href="#pricing" class="btn btn-primary">
+            Get Ultra
+          </a>
+
+          <button class="mobile-toggle" id="mobileToggle" aria-label="Open menu" type="button">
+            ☰
+          </button>
+
+        </div>
+
+
+      </nav>
+
+
+      <div class="mobile-menu" id="mobileMenu">
+
+        <a href="#product">Product</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#stories">Stories</a>
+        <a href="#faq">Help</a>
+
+      </div>
+
+    </div>
+
+  </header>
+
+
+  <!-- =========================================================
+       MAIN
+       ========================================================= -->
+
+  <main id="top">
+
+
+    <!-- =======================================================
+         HERO
+         ======================================================= -->
+
+    <section class="hero">
+
+      <div class="hero-grid"></div>
+
+      <div class="hero-orb orb-one"></div>
+      <div class="hero-orb orb-two"></div>
+
+
+      <div class="container">
+
+        <div class="hero-inner">
+
+
+          <div class="live reveal">
+
+            <span class="live-dot"></span>
+
+            <span>
+              <strong id="creatorCount">357</strong>
+              creators generating right now
+            </span>
+
+          </div>
+
+
+          <h1 class="reveal">
+
+            Unlimited<br />
+
+            <span class="gradient">
+              AI video.
+            </span>
+
+          </h1>
+
+
+          <p class="hero-copy reveal">
+
+            Create cinematic videos with
+            <strong>Veo 3</strong> without daily limits.
+            Go from an idea to production-ready footage
+            faster — starting at just <strong>₹49</strong>.
+
+          </p>
+
+
+          <div class="hero-actions reveal">
+
+            <a href="#pricing" class="btn btn-primary">
+
+              Get Ultra
+
+              <span>→</span>
+
+            </a>
+
+
+            <a href="#product" class="btn btn-outline">
+
+              <span>▶</span>
+
+              See how it works
+
+            </a>
+
+          </div>
+
+
+          <div class="hero-footnote reveal">
+
+            Unlimited generations · Up to 4 in parallel · Instant access
+
+          </div>
+
+
+          <!-- =================================================
+               PRODUCT PREVIEW
+               ================================================= -->
+
+          <div class="product-wrap reveal" id="product">
+
+            <div class="product">
+
+
+              <aside class="product-sidebar">
+
+                <div class="product-brand">
+
+                  <span class="mini-logo"></span>
+
+                  Flow Labs
+
+                </div>
+
+
+                <div class="side-link active">
+                  Create
+                </div>
+
+                <div class="side-link">
+                  My videos
+                </div>
+
+                <div class="side-link">
+                  Templates
+                </div>
+
+                <div class="side-link">
+                  Assets
+                </div>
+
+                <div class="side-link">
+                  Settings
+                </div>
+
+              </aside>
+
+
+              <div class="product-main">
+
+
+                <div class="product-top">
+
+                  <div class="product-title">
+                    Create
+                  </div>
+
+                  <div class="product-user"></div>
+
+                </div>
+
+
+                <div class="prompt">
+
+                  <div class="prompt-text">
+
+                    A cinematic aerial shot of a futuristic
+                    Mumbai skyline at golden hour, volumetric
+                    light, realistic reflections, slow camera
+                    movement, premium commercial aesthetic...
+
+                  </div>
+
+
+                  <div class="prompt-send">
+                    ↑
+                  </div>
+
+                </div>
+
+
+                <div class="generation-label">
+
+                  <span>
+                    Generated videos
+                  </span>
+
+                  <span>
+                    1080p · Veo 3
+                  </span>
+
+                </div>
+
+
+                <div class="video-grid">
+
+                  <div class="video video-one"></div>
+
+                  <div class="video video-two"></div>
+
+                  <div class="video video-three"></div>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =======================================================
+         TRUST
+         ======================================================= -->
+
+    <div class="trust-bar">
+
+      <div class="container">
+
+        <div class="trust-content">
+
+          <span class="stars">
+            ★★★★★
+          </span>
+
+          <strong>
+            4.9/5 average
+          </strong>
+
+          <span class="trust-divider"></span>
+
+          <span>
+            Trusted by 12,000+ creators
+          </span>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- =======================================================
+         STATS
+         ======================================================= -->
+
+    <section class="stats-section">
+
+      <div class="container">
+
+        <div class="stats reveal">
+
+
+          <div class="stat">
+
+            <div class="stat-number">
+              4.9/5
+            </div>
+
+            <div class="stat-label">
+              Community rating
+            </div>
+
+          </div>
+
+
+          <div class="stat">
+
+            <div class="stat-number">
+              12,400+
+            </div>
+
+            <div class="stat-label">
+              Creators scaling
+            </div>
+
+          </div>
+
+
+          <div class="stat">
+
+            <div class="stat-number">
+              3.2M+
+            </div>
+
+            <div class="stat-label">
+              AI productions
+            </div>
+
+          </div>
+
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =======================================================
+         OFFER
+         ======================================================= -->
+
+    <section class="offer-section">
+
+      <div class="container">
+
+        <div class="offer reveal">
+
+
+          <div class="offer-content">
+
+            <div class="offer-label">
+              Limited-time offer
+            </div>
+
+
+            <h2>
+
+              Try Flow Ultra.
+              <span class="gradient">
+                On us.
+              </span>
+
+            </h2>
+
+
+            <p>
+
+              Start creating unlimited AI videos and
+              experience the complete Flow Labs workflow.
+              No daily generation cap. No complicated setup.
+
+            </p>
+
+          </div>
+
+
+          <div class="offer-action">
+
+            <button type="button" class="btn btn-primary btn-claim-modal">
+
+              Claim free Ultra account
+
+              <span>→</span>
+
+            </button>
+
+
+
+            <div class="offer-note">
+
+              Free unlimited video generation
+
+            </div>
+
+          </div>
+
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =======================================================
+         PRICING
+         ======================================================= -->
+
+    <section class="section pricing" id="pricing">
+
+      <div class="container">
+
+
+        <div class="section-head reveal">
+
+          <div class="eyebrow">
+            Plans
+          </div>
+
+          <h2>
+            Simple pricing.
+          </h2>
+
+          <p>
+
+            Choose the plan that fits your workflow.
+            Every plan includes unlimited generations.
+
+          </p>
+
+        </div>
+
+
+        <div class="pricing-grid">
+
+
+          <!-- STARTER -->
+
+          <article class="price-card reveal">
+
+            <div class="plan-name">
+              Starter
+            </div>
+
+
+            <div class="price">
+
+              <strong>
+                ₹49
+              </strong>
+
+              <span>
+                / 1 day
+              </span>
+
+            </div>
+
+
+            <div class="old-price">
+
+              ₹99
+
+              <span class="saving">
+                Save 71%
+              </span>
+
+            </div>
+
+
+            <ul class="features">
+
+              <li>
+                <span class="check">✓</span>
+                Unlimited generations
+              </li>
+
+              <li>
+                <span class="check">✓</span>
+                4× parallel generations
+              </li>
+
+              <li>
+                <span class="check">✓</span>
+                Instant activation
+              </li>
+
+              <li>
+                <span class="check">✓</span>
+                Standard support
+              </li>
+
+            </ul>
+
+
+            <button class="btn btn-outline plan-button" data-plan="Starter" type="button">
+              Choose Starter
+            </button>
+
+          </article>
+
+
+          <!-- PRO -->
+
+          <article class="price-card featured reveal">
+
+            <div class="popular">
+              Most popular
+            </div>
+
+
+            <div class="plan-name">
+              Pro
+            </div>
+
+
+            <div class="price">
+
+              <strong>
+                ₹199
+              </strong>
+
+              <span>
+                / 7 days
+              </span>
+
+            </div>
+
+
+            <div class="old-price">
+
+              ₹499
+
+              <span class="saving">
+                Save 60%
+              </span>
+
+            </div>
+
+
+            <ul class="features">
+
+              <li>
+                <span class="check">✓</span>
+                Unlimited generations
+              </li>
+
+              <li>
+                <span class="check">✓</span>
+                4× parallel generations
+              </li>
+
+              <li>
+                <span class="check">✓</span>
+                Priority activation
+              </li>
+
+              <li>
+                <span class="check">✓</span>
+                24/7 support
+              </li>
+
+            </ul>
+
+
+            <button class="btn btn-primary plan-button" data-plan="Pro" type="button">
+              Choose Pro
+            </button>
+
+          </article>
+
+
+          <!-- ULTRA -->
+
+          <article class="price-card reveal">
+
+            <div class="plan-name">
+              Ultra
+            </div>
+
+
+            <div class="price">
+
+              <strong>
+                ₹399
+              </strong>
+
+              <span>
+                / 1 month
+              </span>
+
+            </div>
+
+
+            <div class="old-price">
+
+              ₹1,499
+
+              <span class="saving">
+                Save 73%
+              </span>
+
+            </div>
+
+
+            <ul class="features">
+
+              <li>
+                <span class="check">✓</span>
+                Unlimited generations
+              </li>
+
+              <li>
+                <span class="check">✓</span>
+                4× parallel generations
+              </li>
+
+              <li>
+                <span class="check">✓</span>
+                Elite activation
+              </li>
+
+              <li>
+                <span class="check">✓</span>
+                Dedicated manager
+              </li>
+
+            </ul>
+
+
+            <button class="btn btn-outline plan-button" data-plan="Ultra" type="button">
+              Choose Ultra
+            </button>
+
+          </article>
+
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =======================================================
+         STORIES
+         ======================================================= -->
+
+    <section class="section" id="stories">
+
+      <div class="container">
+
+
+        <div class="section-head reveal">
+
+          <div class="eyebrow">
+            Customer stories
+          </div>
+
+          <h2>
+
+            Made for people<br />
+            who make things.
+
+          </h2>
+
+          <p>
+
+            From YouTube channels to production teams,
+            creators are using Flow Labs to move from
+            concept to finished video faster.
+
+          </p>
+
+        </div>
+
+
+        <div class="testimonials">
+
+
+          <article class="testimonial reveal">
+
+            <div class="quote">
+
+              “Made 40 videos in one weekend.
+              The official plan would have cost me ₹18k.
+              This was ₹399.”
+
+            </div>
+
+
+            <div class="person">
+
+              <div class="avatar avatar-a">
+                A
+              </div>
+
+
+              <div>
+
+                <div class="person-name">
+                  Aarav S.
+                </div>
+
+                <div class="person-role">
+                  YouTube Creator
+                </div>
+
+              </div>
+
+            </div>
+
+          </article>
+
+
+          <article class="testimonial reveal">
+
+            <div class="quote">
+
+              “We replaced almost our entire
+              stock-footage workflow. Clients can't
+              tell the difference.”
+
+            </div>
+
+
+            <div class="person">
+
+              <div class="avatar avatar-p">
+                P
+              </div>
+
+
+              <div>
+
+                <div class="person-name">
+                  Priya M.
+                </div>
+
+                <div class="person-role">
+                  Creative Agency
+                </div>
+
+              </div>
+
+            </div>
+
+          </article>
+
+
+          <article class="testimonial reveal">
+
+            <div class="quote">
+
+              “Cinematic prompts, 1080p output,
+              and no daily cap. This is exactly how
+              AI video should feel.”
+
+            </div>
+
+
+            <div class="person">
+
+              <div class="avatar avatar-k">
+                K
+              </div>
+
+
+              <div>
+
+                <div class="person-name">
+                  Karan T.
+                </div>
+
+                <div class="person-role">
+                  Indie Filmmaker
+                </div>
+
+              </div>
+
+            </div>
+
+          </article>
+
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =======================================================
+         FAQ
+         ======================================================= -->
+
+    <section class="section" id="faq">
+
+      <div class="container">
+
+
+        <div class="section-head reveal">
+
+          <div class="eyebrow">
+            FAQ
+          </div>
+
+          <h2>
+            Good questions.
+          </h2>
+
+          <p>
+            Everything you need to know before you start.
+          </p>
+
+        </div>
+
+
+        <div class="faq reveal">
+
+
+          <div class="faq-item">
+
+            <button class="faq-question" type="button">
+
+              What does unlimited mean?
+
+              <span class="faq-icon">
+                +
+              </span>
+
+            </button>
+
+
+            <div class="faq-answer">
+
+              <p>
+
+                Flow Labs plans don't use a fixed daily
+                generation allowance. You can create
+                continuously within the plan's available
+                generation capacity and parallel-generation
+                limits.
+
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div class="faq-item">
+
+            <button class="faq-question" type="button">
+
+              How quickly do I get access?
+
+              <span class="faq-icon">
+                +
+              </span>
+
+            </button>
+
+
+            <div class="faq-answer">
+
+              <p>
+
+                Starter provides instant access.
+                Pro and Ultra receive priority activation
+                with the exact activation flow shown
+                during checkout.
+
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div class="faq-item">
+
+            <button class="faq-question" type="button">
+
+              Can I generate multiple videos at once?
+
+              <span class="faq-icon">
+                +
+              </span>
+
+            </button>
+
+
+            <div class="faq-answer">
+
+              <p>
+
+                Yes. Every listed plan supports up to
+                four parallel generations, making it easy
+                to explore multiple concepts at the same time.
+
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div class="faq-item">
+
+            <button class="faq-question" type="button">
+
+              Which plan is right for me?
+
+              <span class="faq-icon">
+                +
+              </span>
+
+            </button>
+
+
+            <div class="faq-answer">
+
+              <p>
+
+                Starter is best for trying Flow Labs.
+                Pro is the sweet spot for active creators,
+                while Ultra is designed for people producing
+                AI video throughout the month.
+
+              </p>
+
+            </div>
+
+          </div>
+
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =======================================================
+         FINAL CTA
+         ======================================================= -->
+
+    <section class="final">
+
+      <div class="container">
+
+
+        <div class="final-card reveal">
+
+          <div class="final-content">
+
+            <h2>
+
+              Create<br />
+              anything.
+
+            </h2>
+
+
+            <p>
+
+              Join 12,000+ creators and start turning
+              ideas into videos today.
+
+            </p>
+
+
+            <a href="#pricing" class="btn btn-primary">
+
+              Start creating
+
+              <span>→</span>
+
+            </a>
+
+          </div>
+
+        </div>
+
+
+      </div>
+
+    </section>
+
+
+  </main>
+
+
+  <!-- =========================================================
+       FOOTER
+       ========================================================= -->
+
+  <footer>
+
+    <div class="container">
+
+
+      <div class="footer-grid">
+
+
+        <div class="footer-brand">
+
+
+          <a href="#top" class="brand">
+
+            <span class="logo">
+
+              <span class="logo-shape"></span>
+
+              <span class="logo-hole"></span>
+
+            </span>
+
+            <span>
+              Flow Labs
+            </span>
+
+          </a>
+
+
+          <p class="footer-description">
+
+            Unlimited AI video for creators,
+            teams, and anyone with something
+            worth making.
+
+          </p>
+
+
+        </div>
+
+
+        <div class="footer-column">
+
+          <h4>
+            Product
+          </h4>
+
+          <a href="#product">
+            Studio
+          </a>
+
+          <a href="#pricing">
+            Pricing
+          </a>
+
+          <a href="#stories">
+            Stories
+          </a>
+
+          <a href="#faq">
+            Help
+          </a>
+
+        </div>
+
+
+        <div class="footer-column">
+
+          <h4>
+            Company
+          </h4>
+
+          <a href="#stories">
+            About
+          </a>
+
+          <a href="#faq">
+            Contact
+          </a>
+
+          <a href="#">
+            Terms
+          </a>
+
+          <a href="#">
+            Privacy
+          </a>
+
+        </div>
+
+
+        <div class="footer-column">
+
+          <h4>
+            Connect
+          </h4>
+
+          <a href="#">
+            X / Twitter
+          </a>
+
+          <a href="#">
+            Discord
+          </a>
+
+          <a href="#">
+            Community
+          </a>
+
+        </div>
+
+
+      </div>
+
+
+      <div class="footer-bottom">
+
+        <span>
+          © 2026 Flow Labs. All rights reserved.
+        </span>
+
+
+        <div class="socials">
+
+          <a href="#" class="social" aria-label="X">
+            X
+          </a>
+
+          <a href="#" class="social" aria-label="Discord">
+            DS
+          </a>
+
+        </div>
+
+      </div>
+
+
+    </div>
+
+  </footer>
+
+
+  <!-- =========================================================
+       JAVASCRIPT
+       ========================================================= -->
+
+  <script>
+
+    /* =========================================================
+       NAVBAR
+       ========================================================= */
+
+    const navbar =
+      document.getElementById("navbar");
+
+    function updateNavbar() {
+
+      navbar.classList.toggle(
+        "scrolled",
+        window.scrollY > 20
+      );
+
+    }
+
+    window.addEventListener(
+      "scroll",
+      updateNavbar,
+      { passive: true }
+    );
+
+    updateNavbar();
+
+
+    /* =========================================================
+       MOBILE MENU
+       ========================================================= */
+
+    const mobileToggle =
+      document.getElementById("mobileToggle");
+
+    const mobileMenu =
+      document.getElementById("mobileMenu");
+
+
+    mobileToggle.addEventListener(
+      "click",
+      () => {
+
+        const isOpen =
+          mobileMenu.classList.toggle("open");
+
+        mobileToggle.textContent =
+          isOpen ? "×" : "☰";
+
+      }
+    );
+
+
+    document
+      .querySelectorAll(".mobile-menu a")
+      .forEach(link => {
+
+        link.addEventListener(
+          "click",
+          () => {
+
+            mobileMenu.classList.remove("open");
+
+            mobileToggle.textContent = "☰";
+
+          }
+        );
+
+      });
+
+
+    /* =========================================================
+       REVEAL ANIMATION
+       ========================================================= */
+
+    const revealElements =
+      document.querySelectorAll(".reveal");
+
+
+    const revealObserver =
+      new IntersectionObserver(
+        entries => {
+
+          entries.forEach(entry => {
+
+            if (!entry.isIntersecting) {
+              return;
+            }
+
+            entry.target.classList.add(
+              "visible"
+            );
+
+            revealObserver.unobserve(
+              entry.target
+            );
+
+          });
+
+        },
+        {
+          threshold: .1
+        }
+      );
+
+
+    revealElements.forEach(
+      element => {
+
+        revealObserver.observe(
+          element
+        );
+
+      }
+    );
+
+
+    /* =========================================================
+       FAQ
+       ========================================================= */
+
+    const faqItems =
+      document.querySelectorAll(
+        ".faq-item"
+      );
+
+
+    faqItems.forEach(item => {
+
+      const question =
+        item.querySelector(
+          ".faq-question"
+        );
+
+      const answer =
+        item.querySelector(
+          ".faq-answer"
+        );
+
+
+      question.addEventListener(
+        "click",
+        () => {
+
+          const wasOpen =
+            item.classList.contains("open");
+
+
+          faqItems.forEach(other => {
+
+            other.classList.remove(
+              "open"
+            );
+
+            other
+              .querySelector(".faq-answer")
+              .style.maxHeight = null;
+
+          });
+
+
+          if (!wasOpen) {
+
+            item.classList.add(
+              "open"
+            );
+
+            answer.style.maxHeight =
+              answer.scrollHeight + "px";
+
+          }
+
+        }
+      );
+
+    });
+
+
+    /* =========================================================
+       CREATOR COUNTER
+       ========================================================= */
+
+    const counter =
+      document.getElementById(
+        "creatorCount"
+      );
+
+    let creators = 357;
+
+
+    setInterval(
+      () => {
+
+        if (Math.random() > .58) {
+
+          creators +=
+            Math.random() > .85
+              ? 2
+              : 1;
+
+          counter.textContent =
+            creators;
+
+        }
+
+      },
+      4300
+    );
+
+
+    /* =========================================================
+       PRICING BUTTONS
+       ========================================================= */
+
+    const planButtons =
+      document.querySelectorAll(
+        ".plan-button"
+      );
+
+
+    planButtons.forEach(button => {
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          const plan =
+            button.dataset.plan;
+
+          const original =
+            button.textContent;
+
+
+          button.textContent =
+            `${plan} selected ✓`;
+
+
+          button.style.background =
+            "#e6f4ea";
+
+          button.style.color =
+            "#137333";
+
+          button.style.borderColor =
+            "#a8dab5";
+
+
+          setTimeout(
+            () => {
+
+              button.textContent =
+                original;
+
+              button.style.background =
+                "";
+
+              button.style.color =
+                "";
+
+              button.style.borderColor =
+                "";
+
+            },
+            1700
+          );
+
+        }
+      );
+
+    });
+
+
+    /* =========================================================
+       BUTTON RIPPLE
+       ========================================================= */
+
+    document
+      .querySelectorAll(".btn")
+      .forEach(button => {
+
+        button.addEventListener(
+          "click",
+          function (event) {
+
+            const rect =
+              this.getBoundingClientRect();
+
+
+            const ripple =
+              document.createElement(
+                "span"
+              );
+
+
+            ripple.className =
+              "ripple";
+
+
+            ripple.style.left =
+              `${event.clientX - rect.left - 60}px`;
+
+
+            ripple.style.top =
+              `${event.clientY - rect.top - 60}px`;
+
+
+            this.appendChild(
+              ripple
+            );
+
+
+            setTimeout(
+              () => {
+
+                ripple.remove();
+
+              },
+              600
+            );
+
+          }
+        );
+
+      });
+
+
+    /* =========================================================
+       SMOOTH ANCHOR NAVIGATION
+       ========================================================= */
+
+    document
+      .querySelectorAll(
+        'a[href^="#"]'
+      )
+      .forEach(anchor => {
+
+        anchor.addEventListener(
+          "click",
+          event => {
+
+            const id =
+              anchor.getAttribute(
+                "href"
+              );
+
+
+            if (
+              !id ||
+              id === "#"
+            ) {
+              return;
+            }
+
+
+            const target =
+              document.querySelector(
+                id
+              );
+
+
+            if (!target) {
+              return;
+            }
+
+
+            event.preventDefault();
+
+
+            const offset = 82;
+
+
+            window.scrollTo({
+
+              top:
+                target.getBoundingClientRect()
+                  .top
+                + window.scrollY
+                - offset,
+
+              behavior: "smooth"
+
+            });
+
+          }
+        );
+
+      });
+
+
+    /* =========================================================
+       SUBTLE HERO MOVEMENT
+       ========================================================= */
+
+    const orbs =
+      document.querySelectorAll(
+        ".hero-orb"
+      );
+
+
+    window.addEventListener(
+      "mousemove",
+      event => {
+
+        if (
+          window.matchMedia(
+            "(prefers-reduced-motion: reduce)"
+          ).matches
+        ) {
+          return;
+        }
+
+
+        const x =
+          event.clientX /
+          window.innerWidth -
+          .5;
+
+
+        const y =
+          event.clientY /
+          window.innerHeight -
+          .5;
+
+
+        orbs.forEach(
+          (orb, index) => {
+
+            const amount =
+              (index + 1) * 7;
+
+
+            orb.style.transform =
+              `translate(
+                ${x * amount}px,
+                ${y * amount}px
+              )`;
+
+          }
+        );
+
+      }
+    );
+
+
+    /* =========================================================
+       CLOSE MOBILE MENU ON ESC
+       ========================================================= */
+
+    document.addEventListener(
+      "keydown",
+      event => {
+
+        if (
+          event.key === "Escape"
+        ) {
+
+          mobileMenu.classList.remove(
+            "open"
+          );
+
+          mobileToggle.textContent =
+            "☰";
+
+        }
+
+      }
+    );
+
+  </script>
+
+  <!-- =========================================================
+       CLAIM FREE ULTRA ACCOUNT MODAL POPUP
+       ========================================================= -->
+  <!-- =========================================================
+       CLAIM FREE ULTRA ACCOUNT MODAL POPUP
+       ========================================================= -->
+  <div class="claim-modal-overlay" id="claimModalOverlay">
+    <div class="claim-modal-card">
+      <button class="claim-modal-close" onclick="closeClaimModal()" aria-label="Close modal">✕</button>
+
+      <!-- STATE 1: CLAIM FORM VIEW -->
+      <div id="claimFormState">
+        <div class="claim-modal-badge">
+          ✦ Free 2-Hour Trial Access
+        </div>
+
+        <h2 class="claim-modal-title">Claim Your Free Ultra Account</h2>
+
+        <p class="claim-modal-context">
+          Join our community to receive your exclusive access code and start generating.
+        </p>
+
+        <a href="https://whatsapp.com/channel/example" target="_blank" rel="noopener" class="claim-whatsapp-btn">
+          <i data-lucide="message-circle" style="width: 16px; height: 16px; margin-right: 6px;"></i> Join WhatsApp Community
+        </a>
+
+        <div class="claim-instruction-divider">
+          Then enter code
+        </div>
+
+        <div class="claim-input-group">
+          <label class="claim-input-label" for="popupTrialCodeInput">Trial access code</label>
+          <input type="text" id="popupTrialCodeInput" class="claim-input"
+            placeholder="Enter Trial Access Code (e.g. FLOW_1234)" autocomplete="off">
+        </div>
+
+        <button class="claim-submit-btn" id="btnClaimSubmit" onclick="submitTrialClaimFromPopup()">
+          Claim Free Ultra Account →
+        </button>
+
+        <div class="claim-error-msg" id="popupTrialError"></div>
+      </div>
+
+      <!-- STATE 2: ALREADY CLAIMED POPUP VIEW -->
+      <div id="claimAlreadyState" style="display: none;">
+        <div class="claim-modal-badge" style="background:#feefc3; color:#b06000; border-color:#fde293;">
+          ✦ Device Trial Status
+        </div>
+
+        <h2 class="claim-modal-title" style="margin-bottom:12px;">Already Claimed</h2>
+
+        <p class="claim-modal-context" style="margin-bottom:28px;">
+          You have already claimed your free account. Only one free account is allowed per user/device.
+        </p>
+
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <a href="#pricing" class="claim-submit-btn" onclick="closeClaimModal();"
+            style="display:inline-flex; align-items:center; justify-content:center; text-decoration:none;">
+            Upgrade to a Paid Plan →
+          </a>
+
+          <a href="dashboard" class="claim-whatsapp-btn" style="background:#f1f3f4; color:#202124; border:1px solid #dadce0; box-shadow:none; display:inline-flex; align-items:center; justify-content:center; text-decoration:none;">
+            Go to Dashboard
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Supabase JS Client SDK & Runtime -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js"></script>
+
+            <script>
+              // SHA-256 Fingerprint Anti-Abuse Generator
+              async function getFingerprint() {
+                const ua = navigator.userAgent;
+                const screenRes = `${window.screen.width}x${window.screen.height}`;
+                const colorDepth = window.screen.colorDepth;
+                const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+                const hwConcurrency = navigator.hardwareConcurrency || 'unknown';
+                const deviceMemory = navigator.deviceMemory || 'unknown';
+                const platform = navigator.platform || 'unknown';
+                const lang = navigator.language || 'unknown';
+                
+                const raw = `${ua}_${screenRes}_${colorDepth}_${tz}_${hwConcurrency}_${deviceMemory}_${platform}_${lang}`;
+                
+                let hash = 0;
+                for (let i = 0; i < raw.length; i++) {
+                  hash = ((hash << 5) - hash) + raw.charCodeAt(i);
+                  hash |= 0; // Convert to 32bit integer
+                }
+                return `fp_${Math.abs(hash).toString(36)}`;
+              }
+
+              // Modal Control Functions & View Switchers
+              function showAlreadyClaimedModalState() {
+                const formState = document.getElementById('claimFormState');
+                const alreadyState = document.getElementById('claimAlreadyState');
+                if (formState) formState.style.display = 'none';
+                if (alreadyState) alreadyState.style.display = 'block';
+              }
+
+              function showClaimFormModalState() {
+                const formState = document.getElementById('claimFormState');
+                const alreadyState = document.getElementById('claimAlreadyState');
+                const err = document.getElementById('popupTrialError');
+                const input = document.getElementById('popupTrialCodeInput');
+                if (err) err.style.display = 'none';
+                if (input) input.value = '';
+                if (formState) formState.style.display = 'block';
+                if (alreadyState) alreadyState.style.display = 'none';
+              }
+
+              async function openClaimModal() {
+                const modal = document.getElementById('claimModalOverlay');
+                if (!modal) return;
+
+                const fp = await getFingerprint();
+                let hasClaimed = false;
+
+                if (localStorage.getItem('flow_current_user')) {
+                  hasClaimed = true;
+                } else if (window.FlowSupabase && window.FlowSupabase.isConfigured()) {
+                  // Check ONLY Supabase - fingerprint stored server-side to prevent local bypass
+                  const supa = window.FlowSupabase.getClient();
+                  if (supa) {
+                    const { data } = await supa.from('claimed_accounts').select('id').eq('device_identifier', fp).maybeSingle();
+                    if (data) hasClaimed = true;
+                  }
+                }
+
+
+
+                if (hasClaimed) {
+                  showAlreadyClaimedModalState();
+                } else {
+                  showClaimFormModalState();
+                }
+
+                modal.classList.add('show');
+              }
+
+              function closeClaimModal() {
+                const modal = document.getElementById('claimModalOverlay');
+                if (modal) modal.classList.remove('show');
+              }
+
+              document.getElementById('claimModalOverlay')?.addEventListener('click', (e) => {
+                if (e.target.id === 'claimModalOverlay') closeClaimModal();
+              });
+
+              document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') closeClaimModal();
+              });
+
+              // Trial Claim Handler from Popup
+              async function submitTrialClaimFromPopup() {
+                const input = document.getElementById('popupTrialCodeInput');
+                const errorDiv = document.getElementById('popupTrialError');
+                const btn = document.getElementById('btnClaimSubmit');
+
+                if (!input || !input.value.trim()) {
+                  if (errorDiv) {
+                    errorDiv.textContent = 'Please enter your trial access code.';
+                    errorDiv.style.display = 'block';
+                  }
+                  return;
+                }
+
+                if (btn) {
+                  btn.disabled = true;
+                  btn.textContent = 'Validating Code...';
+                }
+                if (errorDiv) errorDiv.style.display = 'none';
+
+                const res = await claimTrialCode(input.value.trim());
+
+                if (res && res.success) {
+                  if (btn) btn.textContent = 'Success! Redirecting...';
+                } else {
+                  if (btn) {
+                    btn.disabled = false;
+                    btn.textContent = 'Claim Free Ultra Account →';
+                  }
+
+                  const isAlready = res && (res.alreadyClaimed || (res.message && (res.message.includes('already') || res.message.includes('Device') || res.message.includes('Anti-Abuse'))));
+
+                  if (isAlready) {
+                    showAlreadyClaimedModalState();
+                  } else {
+                    if (errorDiv) {
+                      errorDiv.textContent = res ? res.message : 'Invalid trial access code.';
+                      errorDiv.style.display = 'block';
+                    }
+                  }
+                }
+              }
+
+              // Trial Claim Core Function
+              async function claimTrialCode(codeStr) {
+                if (!codeStr || !codeStr.trim()) return { success: false, message: 'Please enter a valid trial code.' };
+                const fp = await getFingerprint();
+
+                if (window.FlowSupabase && window.FlowSupabase.isConfigured()) {
+                  const res = await window.FlowSupabase.claimTrial(codeStr.trim(), fp);
+                  if (res && res.success) {
+                    window.location.href = 'access';
+                    return { success: true };
+                  } else if (res && res.alreadyClaimed) {
+                    return res;
+                  }
+                }
+
+                const labId = (window.FlowSupabase && window.FlowSupabase.getOrGenerateLabId) ? window.FlowSupabase.getOrGenerateLabId(fp) : `LAB-${Math.floor(Math.random() * 9000) + 1000}`;
+                const realEmail = `ultra_${labId.toLowerCase().replace('-', '')}@flowlabs.ai`;
+                const newUser = {
+                  id: `user_${labId.toLowerCase()}`,
+                  email: realEmail,
+                  name: `Lab User ${labId.replace('LAB-', '')}`,
+                  lab_id: labId,
+                  role: 'user',
+                  plan: 'ultra',
+                  expires_at: new Date(Date.now() + 2 * 3600 * 1000).toISOString()
+                };
+                localStorage.setItem('flow_current_user', JSON.stringify(newUser));
+                localStorage.setItem('flow_lab_id', labId);
+                window.location.href = 'access';
+                return { success: true };
+              }
+
+
+              // Attach openClaimModal and direct Paid Plan WhatsApp order handlers
+              document.addEventListener('DOMContentLoaded', () => {
+                document.querySelectorAll('.btn-claim-modal').forEach(el => {
+                  el.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    openClaimModal();
+                  });
+                });
+
+                document.querySelectorAll('.plan-button').forEach(btn => {
+                  btn.addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    const plan = btn.getAttribute('data-plan') || 'Pro';
+                    const fp = await getFingerprint();
+                    const res = await window.FlowSupabase.createPaidPlanOrder(plan, fp);
+
+                    if (res && res.whatsappUrl) {
+                      window.open(res.whatsappUrl, '_blank');
+                    }
+                    window.location.href = 'access';
+                  });
+                });
+
+                if (window.location.search.includes('claim=true')) {
+                  setTimeout(openClaimModal, 300);
+                }
+              });
+            </script>
+
+</body>
+
+</html>
