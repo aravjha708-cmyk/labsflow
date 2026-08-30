@@ -98,18 +98,18 @@ async function handleGoogleApiProxy(req, res) {
       forwardHeaders['Cookie'] = combinedCookies;
     }
 
-    // Automatically retrieve and attach valid Google OAuth access token if SAPISID is not present
+    // Automatically retrieve and attach valid Google OAuth access token
     let oauthToken = config.apiToken;
-    if (!oauthToken && !authInfo.sapisid) {
+    if (!oauthToken) {
       oauthToken = await config.getValidAccessToken();
     }
 
-    if (authInfo.sapisid) {
-      forwardHeaders['Authorization'] = computeSapisidHash(authInfo.sapisid, 'https://labs.google');
-      forwardHeaders['X-Goog-AuthUser'] = req.headers['x-goog-authuser'] || '0';
-    } else if (oauthToken) {
+    if (oauthToken) {
       forwardHeaders['Authorization'] = oauthToken.startsWith('Bearer ') ? oauthToken : `Bearer ${oauthToken}`;
       forwardHeaders['X-Goog-AuthUser'] = '0';
+    } else if (authInfo.sapisid) {
+      forwardHeaders['Authorization'] = computeSapisidHash(authInfo.sapisid, 'https://labs.google');
+      forwardHeaders['X-Goog-AuthUser'] = req.headers['x-goog-authuser'] || '0';
     } else if (req.headers['authorization']) {
       forwardHeaders['Authorization'] = req.headers['authorization'];
       forwardHeaders['X-Goog-AuthUser'] = req.headers['x-goog-authuser'] || '0';

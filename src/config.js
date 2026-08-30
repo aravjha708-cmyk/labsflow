@@ -30,25 +30,38 @@ const config = {
     if (!this.sessionCookies) return '';
 
     try {
-      const res = await axios.get('https://labs.google/fx/api/auth/session', {
-        headers: {
-          'Cookie': this.sessionCookies,
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-          'Origin': 'https://labs.google',
-          'Referer': 'https://labs.google/fx/tools/flow'
-        },
-        timeout: 8000
-      });
+      let sessionData = null;
+      const endpoints = ['https://labs.google/fx/api/auth/session', 'https://labs.google/api/auth/session'];
+      for (const ep of endpoints) {
+        try {
+          const res = await axios.get(ep, {
+            headers: {
+              'Cookie': this.sessionCookies,
+              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36',
+              'Origin': 'https://labs.google',
+              'Referer': 'https://labs.google/'
+            },
+            timeout: 8000
+          });
+          if (res.data && (res.data.access_token || res.data.accessToken || res.data.token || res.data.user?.accessToken)) {
+            sessionData = res.data;
+            break;
+          }
+        } catch (_) {}
+      }
 
-      if (res.data && res.data.access_token) {
-        this.cachedAccessToken = res.data.access_token;
-        const expiresAt = res.data.expires ? new Date(res.data.expires).getTime() : Date.now() + 3600000;
-        this.tokenExpiry = Math.max(Date.now() + 60000, expiresAt - 300000);
-        console.log('[Auto-Auth] Retrieved fresh OAuth Access Token for user:', res.data.user?.email || 'authenticated');
-        return this.cachedAccessToken;
+      if (sessionData) {
+        const token = sessionData.access_token || sessionData.accessToken || sessionData.token || sessionData.user?.accessToken;
+        if (token) {
+          this.cachedAccessToken = token;
+          const expiresAt = sessionData.expires ? new Date(sessionData.expires).getTime() : Date.now() + 2700000;
+          this.tokenExpiry = Math.max(Date.now() + 60000, expiresAt - 300000);
+          console.log('[Auto-Auth] Retrieved fresh Google OAuth Bearer Token for user:', sessionData.user?.email || 'authenticated');
+          return this.cachedAccessToken;
+        }
       }
     } catch (err) {
-      console.warn('[Auto-Auth] Could not fetch OAuth token from session:', err.message);
+      console.warn('[Auto-Auth] Could not exchange session token for Bearer token:', err.message);
     }
     return '';
   },
