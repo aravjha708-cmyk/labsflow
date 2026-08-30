@@ -26,6 +26,21 @@ app.use(cors());
 // ==============================================================
 app.all('/__google_api_proxy', express.raw({ type: '*/*', limit: '50mb' }), handleGoogleApiProxy);
 
+// Bearer token endpoint: exchanges NextAuth session cookie → real ya29 OAuth token for client-side direct calls
+app.get('/api/auth/bearer-token', async (req, res) => {
+  try {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Cache-Control', 'no-store');
+    const token = await config.getValidAccessToken();
+    if (token) {
+      return res.json({ token, proxyUrl: config.googleProxyUrl || 'https://flow-proxy.aravjha708.workers.dev' });
+    }
+    return res.status(401).json({ error: 'No valid session' });
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+});
+
 // Fast-path tRPC Telemetry & Client Logging endpoints to eliminate 404 console errors
 app.all(
   ['/fx/api/trpc/general.submitBatchLog', '/api/trpc/general.submitBatchLog', '/fx/api/trpc/general.reportClientSideError', '/api/trpc/general.reportClientSideError'],
