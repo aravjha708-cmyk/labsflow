@@ -60,6 +60,20 @@ async function handleGoogleApiProxy(req, res) {
       'sec-fetch-site': 'cross-site'
     };
 
+    if (req.headers['content-type']) {
+      forwardHeaders['Content-Type'] = req.headers['content-type'];
+    }
+
+    for (const [key, value] of Object.entries(req.headers)) {
+      const lower = key.toLowerCase();
+      if ((lower.startsWith('x-goog') || lower.startsWith('x-client')) && lower !== 'x-origin') {
+        forwardHeaders[key] = value;
+      }
+    }
+
+    delete forwardHeaders['x-origin'];
+    delete forwardHeaders['X-Origin'];
+
     // Combine master session cookies with client cookies if present
     let combinedCookies = (config.sessionCookies || '').trim();
     const reqCookie = (req.headers['cookie'] || '').trim();
