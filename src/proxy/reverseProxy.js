@@ -344,22 +344,40 @@ function createFlowProxy() {
                     return response;
                   };
 
+                  // Suppress survey triggers in sendBeacon
+                  if (navigator.sendBeacon) {
+                    const origBeacon = navigator.sendBeacon;
+                    navigator.sendBeacon = function(url, data) {
+                      if (typeof url === 'string' && (url.includes('feedback-pa') || url.includes('survey/trigger'))) {
+                        return true;
+                      }
+                      return origBeacon.call(navigator, url, data);
+                    };
+                  }
+
                   const originalOpen = XMLHttpRequest.prototype.open;
+                  const originalSend = XMLHttpRequest.prototype.send;
                   XMLHttpRequest.prototype.open = function(method, url, ...rest) {
-                    if (url && typeof url === 'string') {
-                      if (url.includes('feedback-pa.clients6.google.com') || url.includes('survey/trigger')) {
-                        // Suppress survey requests
-                        this.send = function() {};
+                    this._url = typeof url === 'string' ? url : '';
+                    if (this._url) {
+                      if (this._url.includes('feedback-pa.clients6.google.com') || this._url.includes('survey/trigger')) {
                         return;
                       }
                       if (
-                        url.includes('aisandbox-pa.googleapis.com') || 
-                        url.includes('clients6.google.com')
+                        this._url.includes('aisandbox-pa.googleapis.com') || 
+                        this._url.includes('clients6.google.com')
                       ) {
-                        url = '/__google_api_proxy?_target_url=' + encodeURIComponent(url);
+                        url = '/__google_api_proxy?_target_url=' + encodeURIComponent(this._url);
                       }
                     }
                     return originalOpen.call(this, method, url, ...rest);
+                  };
+
+                  XMLHttpRequest.prototype.send = function(...args) {
+                    if (this._url && (this._url.includes('feedback-pa') || this._url.includes('survey/trigger'))) {
+                      return;
+                    }
+                    return originalSend.apply(this, args);
                   };
 
                   // ==========================================
