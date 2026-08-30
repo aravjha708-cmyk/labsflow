@@ -127,9 +127,15 @@ async function handleGoogleApiProxy(req, res) {
       }
     }
 
+    let finalUrl = targetUrl;
+    if (config.googleProxyUrl) {
+      const cleanProxy = config.googleProxyUrl.replace(/\/+$/, '');
+      finalUrl = `${cleanProxy}?_target_url=${encodeURIComponent(targetUrl)}`;
+    }
+
     const response = await axios({
       method: req.method,
-      url: targetUrl,
+      url: finalUrl,
       headers: forwardHeaders,
       data: requestData,
       httpsAgent: httpsAgent,

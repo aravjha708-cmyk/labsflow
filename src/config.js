@@ -15,6 +15,7 @@ const config = {
   targetDefaultPath: process.env.TARGET_DEFAULT_PATH || '/fx/tools/flow',
   sessionCookies: process.env.SESSION_COOKIES || process.env.HF_SESSION_COOKIES || '',
   apiToken: process.env.API_TOKEN || process.env.HF_API_TOKEN || '',
+  googleProxyUrl: process.env.GOOGLE_PROXY_URL || process.env.CLOUDFLARE_PROXY_URL || '',
   outboundProxy: process.env.OUTBOUND_PROXY || process.env.RESIDENTIAL_PROXY || process.env.HTTP_PROXY || process.env.HTTPS_PROXY || '',
   gateEnabled: process.env.GATE_ENABLED !== 'false',
   gatePassword: process.env.GATE_PASSWORD || 'flow123',
@@ -35,6 +36,9 @@ const config = {
         this.apiToken = sanitized;
         sessionChanged = true;
       }
+    }
+    if (newSettings.googleProxyUrl !== undefined) {
+      this.googleProxyUrl = String(newSettings.googleProxyUrl).trim();
     }
     if (newSettings.outboundProxy !== undefined) {
       this.outboundProxy = String(newSettings.outboundProxy).trim();
@@ -57,6 +61,7 @@ const config = {
         `TARGET_DEFAULT_PATH=${this.targetDefaultPath}`,
         `SESSION_COOKIES=${this.sessionCookies}`,
         `API_TOKEN=${this.apiToken}`,
+        `GOOGLE_PROXY_URL=${this.googleProxyUrl}`,
         `OUTBOUND_PROXY=${this.outboundProxy}`,
         `GATE_ENABLED=${this.gateEnabled}`,
         `GATE_PASSWORD=${this.gatePassword}`
@@ -141,6 +146,7 @@ const config = {
       port: this.port,
       targetUrl: this.targetUrl,
       targetDefaultPath: this.targetDefaultPath,
+      googleProxyUrl: this.googleProxyUrl || '',
       outboundProxy: this.outboundProxy || '',
       hasSessionCookies: Boolean(this.sessionCookies && this.sessionCookies.length > 0),
       sessionCookiesLength: this.sessionCookies ? this.sessionCookies.length : 0,

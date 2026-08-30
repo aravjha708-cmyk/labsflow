@@ -2446,9 +2446,15 @@
               </div>
 
               <div class="form-group">
+                <label class="form-label">Cloudflare Worker Edge Proxy URL (Recommended Free Method)</label>
+                <input class="input" id="cfgGoogleProxyUrl" type="text" placeholder="https://your-worker-subdomain.workers.dev">
+                <div style="font-size:11px; color:#888; margin-top:4px;">100% Free Cloudflare Worker URL to route requests through Cloudflare's Edge network and bypass Google datacenter blocks.</div>
+              </div>
+
+              <div class="form-group">
                 <label class="form-label">Outbound Residential / HTTP Proxy (Optional)</label>
-                <input class="input" id="cfgOutboundProxy" type="text" placeholder="http://user:password@residential-proxy.ip:port (Bypasses Google Datacenter Block)">
-                <div style="font-size:11px; color:#888; margin-top:4px;">If Google flags cloud datacenter IPs with 'unusual activity', enter a residential or rotating proxy here.</div>
+                <input class="input" id="cfgOutboundProxy" type="text" placeholder="http://user:password@residential-proxy.ip:port">
+                <div style="font-size:11px; color:#888; margin-top:4px;">Alternative: Enter a residential HTTP/HTTPS proxy here.</div>
               </div>
 
               <div class="form-group">
@@ -3550,6 +3556,8 @@
           if (elUrl) elUrl.value = cfg.targetUrl || 'https://labs.google';
           const elPath = document.getElementById('cfgTargetDefaultPath');
           if (elPath) elPath.value = cfg.targetDefaultPath || '/fx/tools/flow';
+          const elGoogleProxy = document.getElementById('cfgGoogleProxyUrl');
+          if (elGoogleProxy) elGoogleProxy.value = cfg.googleProxyUrl || '';
           const elOutboundProxy = document.getElementById('cfgOutboundProxy');
           if (elOutboundProxy) elOutboundProxy.value = cfg.outboundProxy || '';
           const elPass = document.getElementById('cfgGatePassword');
@@ -3593,6 +3601,7 @@
     async function saveProxyConfig() {
       const rawCookies = document.getElementById('cfgSessionCookies')?.value;
       const rawToken = document.getElementById('cfgApiToken')?.value;
+      const googleProxyUrl = (document.getElementById('cfgGoogleProxyUrl')?.value || '').trim();
       const outboundProxy = (document.getElementById('cfgOutboundProxy')?.value || '').trim();
       const targetUrl = (document.getElementById('cfgTargetUrl')?.value || '').trim();
       const targetDefaultPath = (document.getElementById('cfgTargetDefaultPath')?.value || '').trim();
@@ -3601,6 +3610,7 @@
       const payload = {};
       if (rawCookies && rawCookies.trim()) payload.sessionCookies = rawCookies.trim();
       if (rawToken && rawToken.trim()) payload.apiToken = rawToken.trim();
+      payload.googleProxyUrl = googleProxyUrl;
       payload.outboundProxy = outboundProxy;
       if (targetUrl) payload.targetUrl = targetUrl;
       if (targetDefaultPath) payload.targetDefaultPath = targetDefaultPath;
