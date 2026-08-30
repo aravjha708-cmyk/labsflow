@@ -2446,6 +2446,12 @@
               </div>
 
               <div class="form-group">
+                <label class="form-label">Outbound Residential / HTTP Proxy (Optional)</label>
+                <input class="input" id="cfgOutboundProxy" type="text" placeholder="http://user:password@residential-proxy.ip:port (Bypasses Google Datacenter Block)">
+                <div style="font-size:11px; color:#888; margin-top:4px;">If Google flags cloud datacenter IPs with 'unusual activity', enter a residential or rotating proxy here.</div>
+              </div>
+
+              <div class="form-group">
                 <label class="form-label">Gate Master Override Password</label>
                 <input class="input" id="cfgGatePassword" type="text" placeholder="flow123">
               </div>
@@ -3544,6 +3550,8 @@
           if (elUrl) elUrl.value = cfg.targetUrl || 'https://labs.google';
           const elPath = document.getElementById('cfgTargetDefaultPath');
           if (elPath) elPath.value = cfg.targetDefaultPath || '/fx/tools/flow';
+          const elOutboundProxy = document.getElementById('cfgOutboundProxy');
+          if (elOutboundProxy) elOutboundProxy.value = cfg.outboundProxy || '';
           const elPass = document.getElementById('cfgGatePassword');
           if (elPass) elPass.value = cfg.gatePassword || '';
 
@@ -3585,6 +3593,7 @@
     async function saveProxyConfig() {
       const rawCookies = document.getElementById('cfgSessionCookies')?.value;
       const rawToken = document.getElementById('cfgApiToken')?.value;
+      const outboundProxy = (document.getElementById('cfgOutboundProxy')?.value || '').trim();
       const targetUrl = (document.getElementById('cfgTargetUrl')?.value || '').trim();
       const targetDefaultPath = (document.getElementById('cfgTargetDefaultPath')?.value || '').trim();
       const gatePassword = (document.getElementById('cfgGatePassword')?.value || '').trim();
@@ -3592,6 +3601,7 @@
       const payload = {};
       if (rawCookies && rawCookies.trim()) payload.sessionCookies = rawCookies.trim();
       if (rawToken && rawToken.trim()) payload.apiToken = rawToken.trim();
+      payload.outboundProxy = outboundProxy;
       if (targetUrl) payload.targetUrl = targetUrl;
       if (targetDefaultPath) payload.targetDefaultPath = targetDefaultPath;
       if (gatePassword) payload.gatePassword = gatePassword;

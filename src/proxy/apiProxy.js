@@ -108,12 +108,23 @@ async function handleGoogleApiProxy(req, res) {
     const isBodyAllowed = !['GET', 'HEAD', 'OPTIONS'].includes(method);
     const requestData = isBodyAllowed && req.body && req.body.length > 0 ? req.body : undefined;
 
+    const { HttpsProxyAgent } = require('https-proxy-agent');
+
+    let httpsAgent = publicHttpsAgent;
+    if (config.outboundProxy) {
+      try {
+        httpsAgent = new HttpsProxyAgent(config.outboundProxy);
+      } catch (proxyErr) {
+        console.error('Invalid outbound proxy configuration:', proxyErr.message);
+      }
+    }
+
     const response = await axios({
       method: req.method,
       url: targetUrl,
       headers: forwardHeaders,
       data: requestData,
-      httpsAgent: publicHttpsAgent,
+      httpsAgent: httpsAgent,
       timeout: 120000,
       responseType: 'arraybuffer',
       validateStatus: () => true
