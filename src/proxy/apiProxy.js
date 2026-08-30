@@ -121,16 +121,18 @@ async function handleGoogleApiProxy(req, res) {
 
     const { HttpsProxyAgent } = require('https-proxy-agent');
 
-    let httpsAgent = publicHttpsAgent;
+    const cloudflareUrl = config.googleProxyUrl || 'https://flow-proxy.aravjha708.workers.dev';
+    let httpsAgent = undefined;
     if (config.outboundProxy) {
       try {
         httpsAgent = new HttpsProxyAgent(config.outboundProxy);
       } catch (proxyErr) {
         console.error('Invalid outbound proxy configuration:', proxyErr.message);
       }
+    } else if (!cloudflareUrl) {
+      httpsAgent = publicHttpsAgent;
     }
 
-    const cloudflareUrl = config.googleProxyUrl || 'https://flow-proxy.aravjha708.workers.dev';
     let finalUrl = targetUrl;
     const requestHeaders = { ...forwardHeaders };
 
@@ -141,6 +143,9 @@ async function handleGoogleApiProxy(req, res) {
       requestHeaders['Host'] = workerHost;
       requestHeaders['host'] = workerHost;
     }
+
+    delete requestHeaders['content-length'];
+    delete requestHeaders['Content-Length'];
 
     const response = await axios({
       method: req.method,
