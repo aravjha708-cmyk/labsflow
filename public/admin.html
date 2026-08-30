@@ -3583,11 +3583,18 @@
     }
 
     async function saveProxyConfig() {
-      const sessionCookies = (document.getElementById('cfgSessionCookies')?.value || '').trim();
-      const apiToken = (document.getElementById('cfgApiToken')?.value || '').trim();
+      const rawCookies = document.getElementById('cfgSessionCookies')?.value;
+      const rawToken = document.getElementById('cfgApiToken')?.value;
       const targetUrl = (document.getElementById('cfgTargetUrl')?.value || '').trim();
       const targetDefaultPath = (document.getElementById('cfgTargetDefaultPath')?.value || '').trim();
       const gatePassword = (document.getElementById('cfgGatePassword')?.value || '').trim();
+
+      const payload = {};
+      if (rawCookies && rawCookies.trim()) payload.sessionCookies = rawCookies.trim();
+      if (rawToken && rawToken.trim()) payload.apiToken = rawToken.trim();
+      if (targetUrl) payload.targetUrl = targetUrl;
+      if (targetDefaultPath) payload.targetDefaultPath = targetDefaultPath;
+      if (gatePassword) payload.gatePassword = gatePassword;
 
       showToast('Applying & Persisting Master Headers...');
 
@@ -3595,32 +3602,35 @@
         const res = await fetch('/api/proxy-config', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ sessionCookies, apiToken, targetUrl, targetDefaultPath, gatePassword })
+          body: JSON.stringify(payload)
         });
         const data = await res.json();
 
-        // Also persist to Supabase system_sessions table
-        if (window.FlowSupabase && window.FlowSupabase.isConfigured()) {
-          const supa = window.FlowSupabase.getClient();
-          await supa.from('system_sessions').upsert({
-            id: '00000000-0000-0000-0000-000000000001',
-            session_cookies: sessionCookies,
-            api_token: apiToken,
-            target_url: targetUrl || 'https://labs.google',
-            target_default_path: targetDefaultPath || '/fx/tools/flow',
-            gate_password: gatePassword || 'flow123',
-            updated_at: new Date().toISOString()
-          }, { onConflict: 'id' }).catch(() => {});
-        }
+        // Optional client-side sync attempt
+        try {
+          if (window.FlowSupabase && window.FlowSupabase.isConfigured() && payload.sessionCookies) {
+            const supa = window.FlowSupabase.getClient();
+            await supa.from('system_sessions').upsert({
+              id: '00000000-0000-0000-0000-000000000001',
+              session_cookies: payload.sessionCookies,
+              api_token: payload.apiToken || '',
+              target_url: payload.targetUrl || 'https://labs.google',
+              target_default_path: payload.targetDefaultPath || '/fx/tools/flow',
+              gate_password: payload.gatePassword || 'flow123',
+              updated_at: new Date().toISOString()
+            }, { onConflict: 'id' });
+          }
+        } catch (_) {}
 
         if (data && data.config) {
-          showToast('✓ Master Headers Saved & Synced to Proxy & Supabase Successfully!');
+          showToast('✓ Master Headers Saved & Synced Successfully!');
+          if (document.getElementById('cfgSessionCookies')) document.getElementById('cfgSessionCookies').value = '';
           await loadProxyConfig();
         } else {
           showToast(data.message || 'Headers updated');
         }
       } catch (err) {
-        showToast(`Save Error: ${err.message}`);
+        showToast(`Save Notice: ${err.message}`);
       }
     }
 

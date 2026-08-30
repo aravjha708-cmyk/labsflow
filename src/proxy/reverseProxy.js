@@ -242,10 +242,18 @@ function createFlowProxy() {
                     return copy;
                   }
 
-                  // Suppress devtools warning
+                  // Complete Redux DevTools Extension mock with .connect() to prevent Zustand / Next.js hydration exceptions
                   if (!window.__REDUX_DEVTOOLS_EXTENSION__) {
-                    window.__REDUX_DEVTOOLS_EXTENSION__ = function() {
-                      return { init: function(){}, send: function(){}, subscribe: function(){ return function(){}; } };
+                    window.__REDUX_DEVTOOLS_EXTENSION__ = {
+                      connect: function() {
+                        return {
+                          init: function() {},
+                          send: function() {},
+                          subscribe: function() { return function() {}; },
+                          unsubscribe: function() {},
+                          error: function() {}
+                        };
+                      }
                     };
                   }
 
