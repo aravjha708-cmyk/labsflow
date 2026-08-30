@@ -121,36 +121,23 @@ async function handleGoogleApiProxy(req, res) {
 
     const { HttpsProxyAgent } = require('https-proxy-agent');
 
-    const cloudflareUrl = config.googleProxyUrl || 'https://flow-proxy.aravjha708.workers.dev';
-    let httpsAgent = undefined;
+    let httpsAgent = publicHttpsAgent;
     if (config.outboundProxy) {
       try {
         httpsAgent = new HttpsProxyAgent(config.outboundProxy);
+        console.log('[Proxy] Routing through residential proxy:', config.outboundProxy.replace(/:[^:]*@/, ':***@'));
       } catch (proxyErr) {
         console.error('Invalid outbound proxy configuration:', proxyErr.message);
       }
-    } else if (!cloudflareUrl) {
-      httpsAgent = publicHttpsAgent;
     }
 
-    let finalUrl = targetUrl;
-    const requestHeaders = { ...forwardHeaders };
-
-    if (cloudflareUrl) {
-      const cleanProxy = cloudflareUrl.replace(/\/+$/, '');
-      finalUrl = `${cleanProxy}?_target_url=${encodeURIComponent(targetUrl)}`;
-      const workerHost = new URL(cleanProxy).host;
-      requestHeaders['Host'] = workerHost;
-      requestHeaders['host'] = workerHost;
-    }
-
-    delete requestHeaders['content-length'];
-    delete requestHeaders['Content-Length'];
+    delete forwardHeaders['content-length'];
+    delete forwardHeaders['Content-Length'];
 
     const response = await axios({
       method: req.method,
-      url: finalUrl,
-      headers: requestHeaders,
+      url: targetUrl,
+      headers: forwardHeaders,
       data: requestData,
       httpsAgent: httpsAgent,
       timeout: 120000,
