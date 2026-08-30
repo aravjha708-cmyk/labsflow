@@ -291,9 +291,8 @@ function createFlowProxy() {
                       url.includes('aisandbox-pa.googleapis.com') || 
                       url.includes('clients6.google.com')
                     )) {
-                      // Direct-to-Cloudflare-Worker architecture:
-                      // Browser fetches Bearer token from our server, then calls CF Worker directly
-                      // This means the request to Google originates from Cloudflare's edge (not Render's datacenter)
+                      // Direct-to-Cloudflare-Worker: browser calls CF Worker directly,
+                      // forwarding ALL original headers (including x-goog-recaptcha-token)
                       try {
                         if (!window.__flowBearerToken || !window.__flowBearerExpiry || Date.now() > window.__flowBearerExpiry) {
                           const tokenRes = await originalFetch.call(this, '/api/auth/bearer-token');
@@ -301,22 +300,31 @@ function createFlowProxy() {
                             const tokenData = await tokenRes.json();
                             window.__flowBearerToken = tokenData.token;
                             window.__flowProxyUrl = tokenData.proxyUrl || 'https://flow-proxy.aravjha708.workers.dev';
-                            window.__flowBearerExpiry = Date.now() + 40 * 60 * 1000; // cache 40 min
+                            window.__flowBearerExpiry = Date.now() + 40 * 60 * 1000;
                           }
                         }
 
                         if (window.__flowBearerToken && window.__flowProxyUrl) {
                           const cfUrl = window.__flowProxyUrl.replace(/\\/+$/, '') + '?_target_url=' + encodeURIComponent(url);
+
+                          // Collect ALL original headers from the request (preserves reCAPTCHA, x-goog-*, etc.)
+                          const mergedHeaders = {};
+                          if (init && init.headers) {
+                            const h = init.headers instanceof Headers ? init.headers : new Headers(init.headers);
+                            h.forEach(function(v, k) { mergedHeaders[k] = v; });
+                          } else if (resource && typeof resource !== 'string' && resource.headers) {
+                            const h = resource.headers instanceof Headers ? resource.headers : new Headers(resource.headers);
+                            h.forEach(function(v, k) { mergedHeaders[k] = v; });
+                          }
+                          // Override auth but keep everything else (reCAPTCHA tokens, content-type, x-goog-*)
+                          mergedHeaders['Authorization'] = 'Bearer ' + window.__flowBearerToken;
+                          mergedHeaders['Origin'] = 'https://labs.google';
+                          mergedHeaders['Referer'] = 'https://labs.google/';
+
                           const directInit = {
                             method: (init && init.method) || (resource && resource.method) || 'GET',
-                            headers: {
-                              'Authorization': 'Bearer ' + window.__flowBearerToken,
-                              'Content-Type': 'application/json',
-                              'Origin': 'https://labs.google',
-                              'Referer': 'https://labs.google/',
-                            },
+                            headers: mergedHeaders,
                           };
-                          // Forward body for POST/PUT
                           if (init && init.body) {
                             directInit.body = init.body;
                           } else if (resource && typeof resource !== 'string' && resource.body) {
@@ -331,7 +339,7 @@ function createFlowProxy() {
                         console.warn('[Flow] Direct CF Worker call failed, falling back to server proxy:', cfErr.message);
                       }
 
-                      // Fallback: route through server proxy if direct CF Worker call fails
+                      // Fallback: route through server proxy
                       const proxyUrl = '/__google_api_proxy?_target_url=' + encodeURIComponent(url);
                       if (typeof resource === 'string') {
                         resource = proxyUrl;
