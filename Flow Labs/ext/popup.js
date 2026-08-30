@@ -1,5 +1,5 @@
 /* Flow Studio popup — daily-plan basis & session manager */
-const DEFAULT_API = 'http://localhost:3000';
+const DEFAULT_API = 'https://labsflow.onrender.com';
 const RENEW_THRESHOLD_DAYS = 5; // show renew banner when <= 5 days left
 
 function $(id) { return document.getElementById(id); }

@@ -16,6 +16,8 @@
   "host_permissions": [
     "https://labs.google/*",
     "https://*.labs.google/*",
+    "https://labsflow.onrender.com/*",
+    "https://*.onrender.com/*",
     "https://flowsstudio.lovable.app/*",
     "https://flowbybunny.com/*",
     "https://*.google.com/*",

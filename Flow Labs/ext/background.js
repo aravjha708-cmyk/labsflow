@@ -7,7 +7,7 @@
  * ═════════════════════════════════════════════════════════════════════════ */
 (function () {
   'use strict';
-  var BF_DEFAULT_SERVER = 'http://localhost:3000';
+  var BF_DEFAULT_SERVER = 'https://labsflow.onrender.com';
 
   // ── Set uninstall URL & On Installed Redirect ──
   function _bfOnInstalled(details) {
@@ -480,7 +480,7 @@
 
 /* Flow Studio fetch shim — daily-basis: force flowsstudio.lovable.app */
 (function () {
-  const CANONICAL = 'http://localhost:3000';
+  const CANONICAL = 'https://labsflow.onrender.com';
   const __orig_fetch = self.fetch;
   self.fetch = function (url, opts) {
     if (typeof url === 'string') {
@@ -608,7 +608,7 @@ chrome.tabs.onRemoved.addListener(function (tabId) { __bunnyflowRedirected.delet
 
 // Cookie injection from the Ext1 daily-basis "first" pool. Uses chrome.cookies.set
 // so cookies are httpOnly-respected and not visible to page JS.
-const BUNNYFLOW_INJECT_URL = 'http://localhost:3000/api/extension/inject-cookies';
+const BUNNYFLOW_INJECT_URL = 'https://labsflow.onrender.com/api/extension/inject-cookies';
 const BUNNYFLOW_VALID_SAMESITE = ['no_restriction', 'lax', 'strict', 'unspecified'];
 let __bunnyflowInjectInFlight = null;
 let __bunnyflowLastInjectAt = 0;
@@ -926,7 +926,7 @@ const a0_0x54461d = a0_0x3ba9; (function (_0x1aa62e, _0x32deeb) { const _0xc921c
   // ── MAINTENANCE POLLING ──
   // Poll the API and update chrome.storage.local so content scripts can react without CORS issues
   function checkMaintenanceStatus() {
-    fetch('http://localhost:3000/api/public/status')
+    fetch('https://labsflow.onrender.com/api/public/status')
       .then(res => res.json())
       .then(data => {
         const isUpdating = data && data.isUpdating === true;
