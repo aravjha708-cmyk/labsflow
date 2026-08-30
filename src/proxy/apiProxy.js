@@ -44,35 +44,30 @@ async function handleGoogleApiProxy(req, res) {
     const urlObj = new URL(targetUrl);
 
     const forwardHeaders = {
+      ...req.headers,
       'Host': urlObj.host,
       'Origin': 'https://labs.google',
-      'Referer': 'https://labs.google/fx/tools/flow',
+      'Referer': 'https://labs.google/',
       'User-Agent':
         req.headers['user-agent'] ||
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
-      'Accept': req.headers['accept'] || '*/*',
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36',
+      'Accept': req.headers['accept'] || 'application/json, text/plain, */*',
       'Accept-Language': req.headers['accept-language'] || 'en-US,en;q=0.9',
-      'sec-ch-ua': req.headers['sec-ch-ua'] || '"Chromium";v="124", "Google Chrome";v="124", "Not-A.Brand";v="99"',
-      'sec-ch-ua-mobile': '?0',
-      'sec-ch-ua-platform': '"Windows"',
-      'sec-fetch-dest': 'empty',
-      'sec-fetch-mode': 'cors',
-      'sec-fetch-site': 'cross-site'
+      'Sec-Fetch-Dest': 'empty',
+      'Sec-Fetch-Mode': 'cors',
+      'Sec-Fetch-Site': 'cross-site',
+      'Priority': 'u=1, i'
     };
 
     if (req.headers['content-type']) {
       forwardHeaders['Content-Type'] = req.headers['content-type'];
     }
 
-    for (const [key, value] of Object.entries(req.headers)) {
-      const lower = key.toLowerCase();
-      if ((lower.startsWith('x-goog') || lower.startsWith('x-client')) && lower !== 'x-origin') {
-        forwardHeaders[key] = value;
-      }
-    }
-
     delete forwardHeaders['x-origin'];
     delete forwardHeaders['X-Origin'];
+    delete forwardHeaders['x-target-url'];
+    delete forwardHeaders['content-length'];
+    delete forwardHeaders['Content-Length'];
 
     // Combine master session cookies with client cookies if present
     let combinedCookies = (config.sessionCookies || '').trim();
