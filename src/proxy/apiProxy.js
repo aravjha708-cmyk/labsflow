@@ -3,6 +3,44 @@ const config = require('../config');
 const { computeSapisidHash, extractAuthInfo } = require('./googleAuthHelper');
 const { publicHttpsAgent } = require('./dnsHelper');
 
+// Cache for background reCAPTCHA enterprise tokens (valid for 2 minutes)
+let cachedRecaptchaToken = null;
+let recaptchaTokenExpiresAt = 0;
+
+async function fetchGenuineGoogleRecaptchaToken(sessionCookie) {
+  if (cachedRecaptchaToken && Date.now() < recaptchaTokenExpiresAt - 15000) {
+    return cachedRecaptchaToken;
+  }
+
+  try {
+    const cookies = sessionCookie || config.sessionCookies;
+    if (!cookies) return null;
+
+    const response = await axios.get('https://labs.google/fx/api/auth/session', {
+      headers: {
+        'Cookie': cookies,
+        'User-Agent':
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+        'Referer': 'https://labs.google/fx/tools/flow',
+        'Origin': 'https://labs.google'
+      },
+      timeout: 8000
+    });
+
+    const data = response.data;
+    const token = data.recaptchaToken || data.access_token || data.accessToken || null;
+
+    if (token) {
+      cachedRecaptchaToken = token;
+      recaptchaTokenExpiresAt = Date.now() + 110 * 1000;
+      return token;
+    }
+  } catch (err) {
+    console.error('[Recaptcha Minter Notice]:', err.message);
+  }
+  return null;
+}
+
 /**
  * Clean & Sanitized Google API Proxy for Google AI Sandbox & Google APIs
  * Strips all cloud proxy headers (x-forwarded-*, Render headers) to prevent Google 403 flags
@@ -119,7 +157,7 @@ async function handleGoogleApiProxy(req, res) {
       cleanHeaders['Cookie'] = combinedCookies;
     }
 
-    // 5. Clean Request Body (strip any invalid recaptcha tokens)
+    // 5. Clean Request Body & Inject Genuine Background Token into clientContext
     const method = req.method.toUpperCase();
     const isBodyAllowed = !['GET', 'HEAD', 'OPTIONS'].includes(method);
     let requestData = isBodyAllowed && req.body && req.body.length > 0 ? req.body : undefined;
@@ -128,22 +166,33 @@ async function handleGoogleApiProxy(req, res) {
       try {
         const bodyStr = Buffer.isBuffer(requestData) ? requestData.toString('utf-8') : String(requestData);
         const parsed = JSON.parse(bodyStr);
-        let changed = false;
-        if (parsed.clientContext && parsed.clientContext.recaptchaToken) {
-          delete parsed.clientContext.recaptchaToken;
-          changed = true;
+
+        const rToken = await fetchGenuineGoogleRecaptchaToken(combinedCookies || config.sessionCookies);
+        if (rToken) {
+          if (parsed.clientContext) {
+            parsed.clientContext.recaptchaToken = rToken;
+          }
+          if (Array.isArray(parsed.requests)) {
+            parsed.requests.forEach(r => {
+              if (r && typeof r === 'object') {
+                if (!r.clientContext) r.clientContext = { tool: 'FLOW' };
+                r.clientContext.recaptchaToken = rToken;
+              }
+            });
+          }
+        } else {
+          if (parsed.clientContext && parsed.clientContext.recaptchaToken) {
+            delete parsed.clientContext.recaptchaToken;
+          }
+          if (Array.isArray(parsed.requests)) {
+            parsed.requests.forEach(r => {
+              if (r && r.clientContext && r.clientContext.recaptchaToken) {
+                delete r.clientContext.recaptchaToken;
+              }
+            });
+          }
         }
-        if (Array.isArray(parsed.requests)) {
-          parsed.requests.forEach(r => {
-            if (r && r.clientContext && r.clientContext.recaptchaToken) {
-              delete r.clientContext.recaptchaToken;
-              changed = true;
-            }
-          });
-        }
-        if (changed) {
-          requestData = Buffer.from(JSON.stringify(parsed), 'utf-8');
-        }
+        requestData = Buffer.from(JSON.stringify(parsed), 'utf-8');
       } catch (_) {}
     }
 
