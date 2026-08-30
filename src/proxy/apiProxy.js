@@ -8,7 +8,14 @@ const { publicHttpsAgent } = require('./dnsHelper');
  */
 async function handleGoogleApiProxy(req, res) {
   let targetUrl = req.query._target_url;
-  if (!targetUrl && req.headers['x-target-url']) {
+  if (req.url && req.url.includes('_target_url=')) {
+    const raw = req.url.substring(req.url.indexOf('_target_url=') + 12);
+    try {
+      targetUrl = decodeURIComponent(raw);
+    } catch (_) {
+      targetUrl = raw;
+    }
+  } else if (!targetUrl && req.headers['x-target-url']) {
     targetUrl = req.headers['x-target-url'];
   }
 
@@ -37,58 +44,46 @@ async function handleGoogleApiProxy(req, res) {
     const urlObj = new URL(targetUrl);
     const authInfo = extractAuthInfo(config.sessionCookies);
 
-    const clientIp =
-      req.headers['x-forwarded-for']?.split(',')[0]?.trim() ||
-      req.headers['x-real-ip'] ||
-      req.socket.remoteAddress ||
-      '';
-
     const forwardHeaders = {
       'Host': urlObj.host,
       'Origin': 'https://labs.google',
-      'X-Origin': 'https://labs.google',
       'Referer': 'https://labs.google/fx/tools/flow',
       'User-Agent':
         req.headers['user-agent'] ||
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
       'Accept': req.headers['accept'] || '*/*',
       'Accept-Language': req.headers['accept-language'] || 'en-US,en;q=0.9',
-      'X-Goog-AuthUser': req.headers['x-goog-authuser'] || '0'
+      'sec-ch-ua': req.headers['sec-ch-ua'] || '"Chromium";v="124", "Google Chrome";v="124", "Not-A.Brand";v="99"',
+      'sec-ch-ua-mobile': '?0',
+      'sec-ch-ua-platform': '"Windows"',
+      'sec-fetch-dest': 'empty',
+      'sec-fetch-mode': 'cors',
+      'sec-fetch-site': 'cross-site'
     };
-
-    // Forward client IP so Google AI Sandbox treats it as the user's browser session
-    if (clientIp) {
-      forwardHeaders['X-Forwarded-For'] = clientIp;
-      forwardHeaders['X-Real-IP'] = clientIp;
-    }
-
-    // Forward client sec-ch-* headers
-    for (const [key, value] of Object.entries(req.headers)) {
-      const lower = key.toLowerCase();
-      if (
-        lower.startsWith('sec-ch-') ||
-        lower.startsWith('x-goog') ||
-        lower.startsWith('x-client')
-      ) {
-        forwardHeaders[key] = value;
-      }
-    }
 
     if (req.headers['content-type']) {
       forwardHeaders['Content-Type'] = req.headers['content-type'];
     }
 
-    // Ensure Master Google Cookies are attached
+    for (const [key, value] of Object.entries(req.headers)) {
+      const lower = key.toLowerCase();
+      if ((lower.startsWith('x-goog') || lower.startsWith('x-client')) && lower !== 'x-origin') {
+        forwardHeaders[key] = value;
+      }
+    }
+
+    delete forwardHeaders['x-origin'];
+    delete forwardHeaders['X-Origin'];
+
     if (config.sessionCookies) {
       forwardHeaders['Cookie'] = config.sessionCookies;
     }
 
-    // Attach SAPISIDHASH authorization
-    if (authInfo.sapisid) {
+    if (req.headers['authorization']) {
+      forwardHeaders['Authorization'] = req.headers['authorization'];
+    } else if (authInfo.sapisid) {
       forwardHeaders['Authorization'] = computeSapisidHash(authInfo.sapisid, 'https://labs.google');
       forwardHeaders['X-Goog-AuthUser'] = '0';
-    } else if (req.headers['authorization']) {
-      forwardHeaders['Authorization'] = req.headers['authorization'];
     } else if (config.apiToken) {
       forwardHeaders['Authorization'] =
         config.apiToken.startsWith('Bearer ') || config.apiToken.startsWith('SAPISIDHASH ')
@@ -137,11 +132,9 @@ async function forwardInBackground(req, targetUrl) {
     const forwardHeaders = {
       'Host': urlObj.host,
       'Origin': 'https://labs.google',
-      'X-Origin': 'https://labs.google',
       'Referer': 'https://labs.google/fx/tools/flow',
       'User-Agent': req.headers['user-agent'] || 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-      'Cookie': config.sessionCookies || '',
-      'X-Goog-AuthUser': '0'
+      'Cookie': config.sessionCookies || ''
     };
     if (authInfo.sapisid) {
       forwardHeaders['Authorization'] = computeSapisidHash(authInfo.sapisid, 'https://labs.google');
