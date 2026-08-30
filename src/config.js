@@ -27,6 +27,10 @@ const config = {
     if (this.cachedAccessToken && Date.now() < this.tokenExpiry) {
       return this.cachedAccessToken;
     }
+    if (this.apiToken && this.apiToken.startsWith('ya29.')) {
+      this.cachedAccessToken = this.apiToken;
+      return this.cachedAccessToken;
+    }
     if (!this.sessionCookies) return '';
 
     try {
@@ -37,7 +41,7 @@ const config = {
           const res = await axios.get(ep, {
             headers: {
               'Cookie': this.sessionCookies,
-              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36',
+              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
               'Origin': 'https://labs.google',
               'Referer': 'https://labs.google/'
             },
@@ -52,11 +56,15 @@ const config = {
 
       if (sessionData) {
         const token = sessionData.access_token || sessionData.accessToken || sessionData.token || sessionData.user?.accessToken;
-        if (token) {
+        if (token && token.startsWith('ya29.')) {
           this.cachedAccessToken = token;
-          const expiresAt = sessionData.expires ? new Date(sessionData.expires).getTime() : Date.now() + 2700000;
+          this.apiToken = token;
+          const expiresAt = sessionData.expires ? new Date(sessionData.expires).getTime() : Date.now() + 3000000;
           this.tokenExpiry = Math.max(Date.now() + 60000, expiresAt - 300000);
           console.log('[Auto-Auth] Retrieved fresh Google OAuth Bearer Token for user:', sessionData.user?.email || 'authenticated');
+          
+          // Save fresh Bearer token into Supabase immediately
+          this.persistToSupabase();
           return this.cachedAccessToken;
         }
       }
@@ -179,6 +187,10 @@ const config = {
             },
             true
           );
+          if (row.api_token && row.api_token.startsWith('ya29.')) {
+            this.cachedAccessToken = row.api_token;
+            this.tokenExpiry = Date.now() + 50 * 60 * 1000;
+          }
         }
       }
     } catch (err) {
